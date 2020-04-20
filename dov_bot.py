@@ -130,7 +130,7 @@ def session_watch():
                 session.check_session()
 
                 # Closed voting sessions
-                if not session.voting_period_open:
+                if not session.is_open:
                     # Mark session as closed in database
                     sql_cursor.execute(
                         f"UPDATE submissions SET closed = 1 WHERE submission_id = '{session.submission.id}'"

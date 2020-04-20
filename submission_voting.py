@@ -12,6 +12,7 @@ class voting_session:
 
     def __init__(self, submission, bot_comment=None, session_start_time=None):
         self.submission = submission
+        self.is_self_post = submission.is_self
 
         self.voters = []
         self.dead_score = 0
@@ -21,18 +22,23 @@ class voting_session:
         self.bot_comment = None
 
         if bot_comment is not None and session_start_time is not None:
-            self.voting_period_open = True
+            self.is_open = True
             self.bot_comment = bot_comment
             self.session_start_time = session_start_time
             
         elif bot_comment is None and session_start_time is None:
-            self.voting_period_open = False
+            self.is_open = False
             self.session_start_time = 0
 
-            self.__post_welcome_comment()
+            if self.is_self_post:
+                print("\tPost is a self")
+                self.__post_self_comment()
+                submission.mod.remove()
+            else:
+                print("\tPost is regular")
+                self.__post_welcome_comment()
         else:
             raise ValueError("voting_session - __init__() - Bot comment or session start time received without counterpart")
-
 
     def __post_welcome_comment(self):
         if self.bot_comment is None:
@@ -47,10 +53,28 @@ class voting_session:
             # Disable inbox replies
             self.bot_comment.disable_inbox_replies()
             
-            self.voting_period_open = True
+            self.is_open = True
             self.session_start_time = time()
         else:
             raise ValueError("__post_welcome_comment() - Tried to post more than one welcome comment")
+
+    def __post_self_comment(self):
+        if self.bot_comment is None:
+            # Post bot self comment
+            self.bot_comment = self.submission.reply( config['self_comment_text'] % (self.submission.permalink) )
+            print(f"\tComment added - id: '{self.bot_comment.id}'")
+
+            # Distinguish and sticky comment
+            self.bot_comment.mod.distinguish(sticky=True)
+            print("\tComment stickied")
+
+            # Disable inbox replies
+            self.bot_comment.disable_inbox_replies()
+
+            self.is_open = True
+            self.session_start_time = time()
+        else:
+            raise ValueError("__post_self_comment() - Tried to post more than one welcome comment")
     
     def __parse_tally(self, reply):
         voter = reply.author
@@ -104,7 +128,7 @@ class voting_session:
         vs = self.vegg_score
         ns = self.none_score
 
-        if not self.voting_period_open:
+        if not self.is_open:
             if   ns > ds and ns > vs:
                 return "Neither"
             elif ds > vs:
@@ -140,7 +164,7 @@ class voting_session:
 
     def __close_voting_period(self, removed=False):
         # Close the voting period
-        self.voting_period_open = False
+        self.is_open = False
 
         # Lock the comment to prevent uncounted votes
         self.bot_comment.mod.lock()
@@ -166,13 +190,27 @@ class voting_session:
 
         
     def check_session(self):
-        # Check if post was removed
-        if self.submission.author is None or self.submission.removed:
-            print(f"Post removed - Closing session - '{self.bot_comment.id}'")
-            self.__close_voting_period(removed=True)
+        # For regular posts
+        if not self.is_self_post:
+            # Check if post was removed
+            if self.submission.author is None or self.submission.removed:
+                print(f"Post removed - Closing session - '{self.bot_comment.id}'")
+                self.__close_voting_period(removed=True)
 
-        # Check if session time is up
-        elif ((time() - self.session_start_time) / 60) > config["minutes"]:
-            print(f"Time is up - Closing session - '{self.bot_comment.id}'")
-            self.__close_voting_period() 
+            # Check if session time is up
+            elif ((time() - self.session_start_time) / 60) > config["minutes"]:
+                print(f"Time is up - Closing session - '{self.bot_comment.id}'")
+                self.__close_voting_period() 
+
+        # For self posts
+        else:
+            if self.submission.approved:
+                print("Self post approved")
+                self.is_open = False
+                self.bot_comment.delete()
+           
+            # Check if session time is up
+            elif ((time() - self.session_start_time) / 60) > config["minutes"]:
+                print(f"Time is up - Closing session - '{self.bot_comment.id}'")
+                self.is_open = False 
 

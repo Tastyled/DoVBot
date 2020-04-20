@@ -12,6 +12,9 @@ config = dict(
                               "| --- | --- | --- |\n"
                               "| %d | %d | %d |\n***\n" +
                               f"^^More ^^Info ^^[Here]({wiki_url})",
+    self_comment_text       = "Thank you for your submission to r/DeadorVegetable!\n\n" +             # Comment posted to a self-post
+                              "Your submission has been temporarily removed because text-posts require mod approval. To get approval, please message the mods with a link to this post within 24 hours.\n\n" + 
+                              "Link: www.reddit.com%s",
     minutes                 = 1440,                                                                      # Duration of voting period
     dead_words              = ["dead", "ded", "rip", "rest in peace", "dwad"],
     vegg_words              = ["vegetable", "veggie", "veggies", "veg"],

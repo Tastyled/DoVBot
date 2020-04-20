@@ -214,3 +214,6 @@ class voting_session:
                 print(f"Time is up - Closing session - '{self.bot_comment.id}'")
                 self.is_open = False 
 
+            elif self.submission.author is None:
+                print(f"Post removed - Closing session - '{self.bot_comment.id}'")
+                self.is_open = False

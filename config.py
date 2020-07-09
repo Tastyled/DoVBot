@@ -1,4 +1,4 @@
-wiki_url                = "https://www.reddit.com/r/DeadorVegetable/comments/f2mrpl/dead_or_vegetable_voting_is_live/"
+wiki_url                = "https://www.reddit.com/r/DeadorVegetable/wiki/dovbot"
 
 config = dict(
     # subreddit               = "Tastyled_Bot_Testing",                                                    # Subreddit
@@ -16,7 +16,7 @@ config = dict(
                               "Your submission has been temporarily removed because text-posts require mod approval. To get approval, please message the mods with a link to this post within 24 hours.\n\n" + 
                               "Link: www.reddit.com%s",
     minutes                 = 1440,                                                                      # Duration of voting period
-    dead_words              = ["dead", "ded", "rip", "rest in peace", "dwad"],
+    dead_words              = ["dead", "ded", "rip", "dwad"],
     vegg_words              = ["vegetable", "veggie", "veggies", "veg"],
     none_words              = ["neither", "none"],
 )

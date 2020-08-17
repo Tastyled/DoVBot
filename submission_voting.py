@@ -142,24 +142,31 @@ class voting_session:
 
     def __set_submission_flair(self, winner):
         print("\tSetting Submission Flair")
+        flair_text = ""
+
+        if self.submission.link_flair_text == "NSFL":
+            flair_text = "NSFL - "
         
         # Get flair choices to select flair ID
         flair_choices = self.submission.flair.choices()
 
         if   winner == "Neither":
-            flair_id = next(item for item in flair_choices if item["flair_text"] == "Neither")["flair_template_id"]
-            self.submission.flair.select( flair_id )
+            flair_text = flair_text + "Neither"
+
         elif winner == "Dead":
-            flair_id = next(item for item in flair_choices if item["flair_text"] == "RIP")["flair_template_id"]
-            self.submission.flair.select( flair_id )
+            flair_text = flair_text + "RIP"
+
         elif winner == "Fresh Veggie":
-            flair_id = next(item for item in flair_choices if item["flair_text"] == "Fresh Veggie")["flair_template_id"]
-            self.submission.flair.select( flair_id )
+            flair_text = flair_text + "Fresh Veggie"
+
         elif winner == "Hard to Tell":
-            flair_id = next(item for item in flair_choices if item["flair_text"] == "Hard to Tell")["flair_template_id"]
-            self.submission.flair.select( flair_id )
+            flair_text = flair_text + "Hard to Tell"
+
         else:
             raise ValueError("__set_submission_flair() - Bad winner input")
+
+        flair_id = next(item for item in flair_choices if item["flair_text"] == flair_text)["flair_template_id"]
+        self.submission.flair.select( flair_id )
 
 
     def __close_voting_period(self, removed=False):

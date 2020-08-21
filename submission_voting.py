@@ -197,6 +197,14 @@ class voting_session:
 
         
     def check_session(self):
+
+        # Mark post as NSFW is NSFL is flaired
+        if self.submission.link_flair_text == "NSFL":
+            if not self.submission.over_18:
+                self.submission.mod.nsfw()
+            if not self.submission.spoiler:
+                self.submission.mod.spoiler()
+
         # For regular posts
         if not self.is_self_post:
             # Check if post was removed

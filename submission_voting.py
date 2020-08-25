@@ -7,6 +7,7 @@ from time import time, sleep
 
 # Config
 from config import config
+from helpers import urlify
 
 class voting_session:
 
@@ -61,7 +62,7 @@ class voting_session:
     def __post_self_comment(self):
         if self.bot_comment is None:
             # Post bot self comment
-            self.bot_comment = self.submission.reply( config['self_comment_text'] % (self.submission.permalink) )
+            self.bot_comment = self.submission.reply( config['self_comment_text'] % (config['subreddit'], urlify(self.submission.author), urlify(self.submission.title, False),  urlify(self.submission.permalink, False)) )
             print(f"\tComment added - id: '{self.bot_comment.id}'")
 
             # Distinguish and sticky comment

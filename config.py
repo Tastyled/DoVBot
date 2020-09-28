@@ -23,7 +23,7 @@ config = dict(
 
     # Comment posted to a self-post
     self_comment_text       = "Thank you for your submission to r/DeadorVegetable!\n\n" +
-                              "Your submission has been temporarily removed because text-posts require mod approval. If you have not already been approved, please click the link below and hit send.\n\n" +
+                              "Your submission has been automatically removed because text-posts require mod approval. If you have not already been approved, please click the link below and hit send.\n\n" +
 
                               "[Message the Mods](https://www.reddit.com/message/compose?to=" +
                               "%%2Fr%%2F%s&subject=" +

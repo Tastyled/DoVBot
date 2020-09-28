@@ -26,7 +26,7 @@ class voting_session:
             self.is_open = True
             self.bot_comment = bot_comment
             self.session_start_time = session_start_time
-            
+
         elif bot_comment is None and session_start_time is None:
             self.is_open = False
             self.session_start_time = 0
@@ -46,14 +46,14 @@ class voting_session:
             # Post bot welcome comment
             self.bot_comment = self.submission.reply( config['welcome_comment_text'] )
             print(f"\tComment added - id: '{self.bot_comment.id}'")
-            
+
             # Distinguish and sticky comment
             self.bot_comment.mod.distinguish(sticky=True)
             print("\tComment stickied")
 
             # Disable inbox replies
             self.bot_comment.disable_inbox_replies()
-            
+
             self.is_open = True
             self.session_start_time = time()
         else:
@@ -62,7 +62,7 @@ class voting_session:
     def __post_self_comment(self):
         if self.bot_comment is None:
             # Post bot self comment
-            self.bot_comment = self.submission.reply( config['self_comment_text'] % (config['subreddit'], urlify(self.submission.author), urlify(self.submission.title, False),  urlify(self.submission.permalink, False)) )
+            self.bot_comment = self.submission.reply( config['self_comment_text'] % (config['subreddit'], urlify(self.submission.author.name, False), urlify(self.submission.title, False),  urlify(self.submission.permalink, False)) )
             print(f"\tComment added - id: '{self.bot_comment.id}'")
 
             # Distinguish and sticky comment
@@ -76,7 +76,7 @@ class voting_session:
             self.session_start_time = time()
         else:
             raise ValueError("__post_self_comment() - Tried to post more than one welcome comment")
-    
+
     def __parse_tally(self, reply):
         voter = reply.author
         dead_flag = 0
@@ -88,7 +88,7 @@ class voting_session:
 
         # Make sure voter has not previously voted
         if voter not in self.voters:
-            # Search reply for neither - 
+            # Search reply for neither -
             if any(word in reply_body for word in config['none_words']):
                 self.none_score += 1        # Skip multi flag checking in case comment reads "neither dead nor veggie" or similar phrasing
                 return
@@ -147,7 +147,7 @@ class voting_session:
 
         if self.submission.link_flair_text == "NSFL":
             flair_text = "NSFL - "
-        
+
         # Get flair choices to select flair ID
         flair_choices = self.submission.flair.choices()
 
@@ -181,14 +181,14 @@ class voting_session:
             # Check bot comment for replies
             self.__count_replies()
             winner = self.__get_winner()
-        
+
             # Next edit the bot comment to display votes
             print("\tEditing Comment")
             edit_comment = config["edit_comment_text"] % ( winner, self.dead_score, self.vegg_score, self.none_score )
             self.bot_comment.edit( edit_comment )
 
             # Set the submission flair to reflect how users voted
-            self.__set_submission_flair(winner) 
+            self.__set_submission_flair(winner)
 
         else:
             # If post was removed or deleted delete the bot comment
@@ -196,27 +196,27 @@ class voting_session:
 
 
 
-        
+
     def check_session(self):
 
         # Mark post as NSFW is NSFL is flaired
         if self.submission.link_flair_text == "NSFL":
             if not self.submission.over_18:
                 self.submission.mod.nsfw()
-            if not self.submission.spoiler:
-                self.submission.mod.spoiler()
+            # if not self.submission.spoiler:
+            #     self.submission.mod.spoiler()
 
         # For regular posts
         if not self.is_self_post:
             # Check if post was removed
-            if self.submission.author is None or self.submission.removed:
+            if self.submission.author is None: # or self.submission.removed:
                 print(f"Post removed - Closing session - '{self.bot_comment.id}'")
                 self.__close_voting_period(removed=True)
 
             # Check if session time is up
             elif ((time() - self.session_start_time) / 60) > config["minutes"]:
                 print(f"Time is up - Closing session - '{self.bot_comment.id}'")
-                self.__close_voting_period() 
+                self.__close_voting_period()
 
         # For self posts
         else:
@@ -224,11 +224,11 @@ class voting_session:
                 print("Self post approved")
                 self.is_open = False
                 self.bot_comment.delete()
-           
+
             # Check if session time is up
             elif ((time() - self.session_start_time) / 60) > config["minutes"]:
                 print(f"Time is up - Closing session - '{self.bot_comment.id}'")
-                self.is_open = False 
+                self.is_open = False
 
             elif self.submission.author is None:
                 print(f"Post removed - Closing session - '{self.bot_comment.id}'")

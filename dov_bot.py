@@ -83,14 +83,16 @@ def submission_watch( subreddit ):
                 if submission is not None:  # Check if a post is found
                     if submission.id not in synced_posts:  # Check if submission wasn't synced yet
                         print(f"New post from user: '{submission.author}' id: '{submission.id}'")
-                        send_message("Tastyled", f'New Post in r/{submission.subreddit.display_name}', f'{submission.permalink}')
+                        if submission.is_self:
+                            send_message("Tastyled", f'New self-post in r/{submission.subreddit.display_name}', f'{submission.permalink}')
+
                         # Create new voting session
                         new_session = voting_session( submission )
                         print("\tSession created")
                         # Record new session
                         open_sessions.append( new_session )
                         print("\tAdded to memory")
-                        
+
                         # Add to database
                         sql_cursor.execute(
                             "INSERT INTO submissions (submission_id, bot_comment_id, bot_comment_time) VALUES (?,?,?)",
@@ -184,17 +186,17 @@ def comment_watch( subreddit ):
                             print("Removing spam comment")
                             comment.mod.remove(spam=False, mod_note="Voting outside of voting thread")
 
-                            print("Sending Message to user")
-                            send_message(comment.author.name, "Notice of Comment Removal",
-                            f"Thank you for you participating in /r/DeadorVegetable!\n\n" +
-                            "Unfortunately your comment has been removed because we are trying to keep top level comments reserved for discussion. " +
-                            "If you are trying to vote on the post's classification please reply to /u/DOVBOT's comment, not the post itself. " +
-                            "Keep in mind, if the post is more than 24 hours old, you can no longer vote.\n\n" +
-                            "If you think this was done in error, please respond to this message and your comment will be reexamined by the mods.\n\n" 
-                            f"Comment: \"{comment.body}\"  \n"
-                            f"Link: {comment.permalink}"                          
-                            )
-                            
+                            # print("Sending Message to user")
+                            # send_message(comment.author.name, "Notice of Comment Removal",
+                            # f"Thank you for you participating in /r/DeadorVegetable!\n\n" +
+                            # "Unfortunately your comment has been removed because we are trying to keep top level comments reserved for discussion. " +
+                            # "If you are trying to vote on the post's classification please reply to /u/DOVBOT's comment, not the post itself. " +
+                            # "Keep in mind, if the post is more than 24 hours old, you can no longer vote.\n\n" +
+                            # "If you think this was done in error, please respond to this message and your comment will be reexamined by the mods.\n\n"
+                            # f"Comment: \"{comment.body}\"  \n"
+                            # f"Link: {comment.permalink}"
+                            # )
+
                             # send_message("Tastyled", "Comment Removed",
                             # f"Comment Removed\n\nuser: /u/{comment.author.name}  \nlink: {comment.permalink}  \ncomment: \"{comment.body}\"")
 
@@ -212,19 +214,19 @@ def comment_watch( subreddit ):
 def inbox_watch():
     # Inbox Checking Thread
     print("Starting Inbox Check Thread")
-    
+
     while True:
         try:
             for m in reddit.inbox.unread():
                 if m is not None:
                     print("Message Received - Forwarding")
-                    send_message("Tastyled", 
+                    send_message("Tastyled",
                         f"Message received from user: /u/{m.author}",
                         f"/u/{m.author}  \n" +
                         f"Subject: {m.subject}\n\n" +
                         f"{m.body}" )
                     m.mark_read()
-                
+
         except prawcore.exceptions.ServerError as e:
             print(f"\n\n{e}")
             print("Server Error, thread waiting 30 seconds for retry")

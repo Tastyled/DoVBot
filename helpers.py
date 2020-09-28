@@ -7,12 +7,12 @@ def in_ascii_bounds( char ):
         return True
     elif (char >= ord('a') and char <= ord('z')):
         return True
-        
+
     return False
 
 def urlify( string, replacement=True):
     new_string = ""
-    
+
     for char in string:
 
         if in_ascii_bounds(char):
@@ -23,6 +23,6 @@ def urlify( string, replacement=True):
                 new_string += f"%%{char_num}"
             else:
                 new_string += f"%{char_num}"
-                
+
 
     return new_string

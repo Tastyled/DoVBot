@@ -15,7 +15,7 @@ config = dict(
 
     # Comment after the voting period has ended
     edit_comment_text       = "Voting period has closed. Subject has been deemed: **%s**\n***\n" +
-                              "##Votes\n" +
+                              "#####Votes\n" +
                               "| Dead | Veggie | Neither |\n" +
                               "| --- | --- | --- |\n"
                               "| %d | %d | %d |\n***\n" +

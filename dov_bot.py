@@ -173,11 +173,12 @@ def comment_watch( subreddit ):
 
                     # Check comment for any banned words
                     if any(word in body for word in banned_words):
-                        send_message("Tastyled", "Potential Hate Speach Detected",
-                        "Potential Hate Speach Detected\n\n" +
-                        f"User: /u/{comment.author}  \n" +
-                        f"Comment: '{comment.body}'\n\n" +
-                        f"{comment.permalink}")
+                        comment.report("Banned word found in text")
+                        # send_message("Tastyled", "Potential Hate Speach Detected",
+                        # "Potential Hate Speach Detected\n\n" +
+                        # f"User: /u/{comment.author}  \n" +
+                        # f"Comment: '{comment.body}'\n\n" +
+                        # f"{comment.permalink}")
 
                     # Check comment for vote word
                     if comment.parent_id == comment.link_id:                            # Check only top level comments

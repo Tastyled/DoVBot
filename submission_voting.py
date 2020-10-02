@@ -2,6 +2,7 @@
 
 # Imports
 import praw
+from praw.models import MoreComments
 import string
 from time import time, sleep
 
@@ -120,6 +121,8 @@ class voting_session:
         # Get replies to bot comment and send them to be parsed
         print("\tCounting Replies")
         for reply in self.bot_comment.replies:
+            if isinstance(reply, MoreComments):
+                continue
             self.__parse_tally(reply)
         print(f"\tReplies - D: {self.dead_score} - V: {self.vegg_score} - N: {self.none_score}")
 

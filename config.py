@@ -9,7 +9,8 @@ config = dict(
     subreddit               = "DeadorVegetable",
 
     # Welcome text the bot should comment
-    welcome_comment_text    = "***\nDead or Vegetable?  \nReply to **this comment** with your opinion.\n***\n" +
+    welcome_comment_text    = "***\nDead or Vegetable? Reply to **this comment** with your opinion." +
+                              "\n\nIf you know the outcome, please remember to mark your comment with a spoiler tag >!\>!like this!\<!<\n***\n" +
                             #   "Good post? **Upvote** this comment. Bad post? **Downvote**.\n***\n" +
                               f"^(For more info:) [^(How Voting Works)]({wiki_url}) ^(-) [^(Latest Mod Update)]({mod_message_url})",
 

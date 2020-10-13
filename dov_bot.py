@@ -50,6 +50,13 @@ def get_db():
     return sql_config, sql_cursor
 
 
+def failure_wait_retry(error, threadname):
+    print(f"\n\n{error}")
+    print(f"{threadname} waiting 30 seconds for retry")
+    sleep(30)
+    print(f"Restarting {threadname} Thread")
+
+
 def load_db_data( sql_cursor ):
     # Sync previously read posts
     for result in sql_cursor.execute(
@@ -109,10 +116,12 @@ def submission_watch( subreddit ):
                         # print(f"Skipping previously read post")
                         pass
         except prawcore.exceptions.ServerError as e:
-            print(f"\n\n{e}")
-            print("Server Error, thread waiting 30 seconds for retry")
-            sleep(30)
-            print("Restarting Submission Thread")
+            failure_wait_retry(e, "submissions")
+        except prawcore.exceptions.RequestException as e:
+            failure_wait_retry(e, "submissions")
+        except prawcore.exceptions.ResponseException as e:
+            failure_wait_retry(e, "submissions")
+
 
     raise ValueError("SUBMISSION THREAD EXITING")
 
@@ -150,10 +159,11 @@ def session_watch():
                     print("\tRemoved from memory")
 
         except prawcore.exceptions.ServerError as e:
-            print(f"\n\n{e}")
-            print("Server Error, thread waiting 30 seconds for retry")
-            sleep(30)
-            print("Restarting Session Thread")
+            failure_wait_retry(e, "submissions")
+        except prawcore.exceptions.RequestException as e:
+            failure_wait_retry(e, "submissions")
+        except prawcore.exceptions.ResponseException as e:
+            failure_wait_retry(e, "submissions")
 
     raise ValueError("SESSION THREAD EXITING")
 
@@ -204,10 +214,11 @@ def comment_watch( subreddit ):
                             print("Done")
 
         except prawcore.exceptions.ServerError as e:
-            print(f"\n\n{e}")
-            print("Server Error, thread waiting 30 seconds for retry")
-            sleep(30)
-            print("Restarting Comment Thread")
+            failure_wait_retry(e, "submissions")
+        except prawcore.exceptions.RequestException as e:
+            failure_wait_retry(e, "submissions")
+        except prawcore.exceptions.ResponseException as e:
+            failure_wait_retry(e, "submissions")
 
     raise ValueError("COMMENT THREAD EXITING")
 
@@ -229,10 +240,11 @@ def inbox_watch():
                     m.mark_read()
 
         except prawcore.exceptions.ServerError as e:
-            print(f"\n\n{e}")
-            print("Server Error, thread waiting 30 seconds for retry")
-            sleep(30)
-            print("Restarting Inbox Thread")
+            failure_wait_retry(e, "submissions")
+        except prawcore.exceptions.RequestException as e:
+            failure_wait_retry(e, "submissions")
+        except prawcore.exceptions.ResponseException as e:
+            failure_wait_retry(e, "submissions")
 
     raise ValueError("INBOX THREAD EXITING")
 

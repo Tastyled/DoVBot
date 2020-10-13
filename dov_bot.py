@@ -159,11 +159,11 @@ def session_watch():
                     print("\tRemoved from memory")
 
         except prawcore.exceptions.ServerError as e:
-            failure_wait_retry(e, "submissions")
+            failure_wait_retry(e, "sessions")
         except prawcore.exceptions.RequestException as e:
-            failure_wait_retry(e, "submissions")
+            failure_wait_retry(e, "sessions")
         except prawcore.exceptions.ResponseException as e:
-            failure_wait_retry(e, "submissions")
+            failure_wait_retry(e, "sessions")
 
     raise ValueError("SESSION THREAD EXITING")
 
@@ -214,11 +214,11 @@ def comment_watch( subreddit ):
                             print("Done")
 
         except prawcore.exceptions.ServerError as e:
-            failure_wait_retry(e, "submissions")
+            failure_wait_retry(e, "comments")
         except prawcore.exceptions.RequestException as e:
-            failure_wait_retry(e, "submissions")
+            failure_wait_retry(e, "comments")
         except prawcore.exceptions.ResponseException as e:
-            failure_wait_retry(e, "submissions")
+            failure_wait_retry(e, "comments")
 
     raise ValueError("COMMENT THREAD EXITING")
 
@@ -240,11 +240,11 @@ def inbox_watch():
                     m.mark_read()
 
         except prawcore.exceptions.ServerError as e:
-            failure_wait_retry(e, "submissions")
+            failure_wait_retry(e, "inbox")
         except prawcore.exceptions.RequestException as e:
-            failure_wait_retry(e, "submissions")
+            failure_wait_retry(e, "inbox")
         except prawcore.exceptions.ResponseException as e:
-            failure_wait_retry(e, "submissions")
+            failure_wait_retry(e, "inbox")
 
     raise ValueError("INBOX THREAD EXITING")
 

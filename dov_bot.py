@@ -50,6 +50,13 @@ def get_db():
     return sql_config, sql_cursor
 
 
+def failure_wait_retry(error, threadname):
+    print(f"\n\n{error}")
+    print(f"{threadname} waiting 30 seconds for retry")
+    sleep(30)
+    print(f"Restarting {threadname} Thread")
+
+
 def load_db_data( sql_cursor ):
     # Sync previously read posts
     for result in sql_cursor.execute(
@@ -109,10 +116,12 @@ def submission_watch( subreddit ):
                         # print(f"Skipping previously read post")
                         pass
         except prawcore.exceptions.ServerError as e:
-            print(f"\n\n{e}")
-            print("Server Error, thread waiting 30 seconds for retry")
-            sleep(30)
-            print("Restarting Submission Thread")
+            failure_wait_retry(e, "submissions")
+        except prawcore.exceptions.RequestException as e:
+            failure_wait_retry(e, "submissions")
+        except prawcore.exceptions.ResponseException as e:
+            failure_wait_retry(e, "submissions")
+
 
     raise ValueError("SUBMISSION THREAD EXITING")
 
@@ -150,10 +159,11 @@ def session_watch():
                     print("\tRemoved from memory")
 
         except prawcore.exceptions.ServerError as e:
-            print(f"\n\n{e}")
-            print("Server Error, thread waiting 30 seconds for retry")
-            sleep(30)
-            print("Restarting Session Thread")
+            failure_wait_retry(e, "sessions")
+        except prawcore.exceptions.RequestException as e:
+            failure_wait_retry(e, "sessions")
+        except prawcore.exceptions.ResponseException as e:
+            failure_wait_retry(e, "sessions")
 
     raise ValueError("SESSION THREAD EXITING")
 
@@ -173,11 +183,12 @@ def comment_watch( subreddit ):
 
                     # Check comment for any banned words
                     if any(word in body for word in banned_words):
-                        send_message("Tastyled", "Potential Hate Speach Detected",
-                        "Potential Hate Speach Detected\n\n" +
-                        f"User: /u/{comment.author}  \n" +
-                        f"Comment: '{comment.body}'\n\n" +
-                        f"{comment.permalink}")
+                        comment.report("Banned word found in text")
+                        # send_message("Tastyled", "Potential Hate Speach Detected",
+                        # "Potential Hate Speach Detected\n\n" +
+                        # f"User: /u/{comment.author}  \n" +
+                        # f"Comment: '{comment.body}'\n\n" +
+                        # f"{comment.permalink}")
 
                     # Check comment for vote word
                     if comment.parent_id == comment.link_id:                            # Check only top level comments
@@ -203,10 +214,11 @@ def comment_watch( subreddit ):
                             print("Done")
 
         except prawcore.exceptions.ServerError as e:
-            print(f"\n\n{e}")
-            print("Server Error, thread waiting 30 seconds for retry")
-            sleep(30)
-            print("Restarting Comment Thread")
+            failure_wait_retry(e, "comments")
+        except prawcore.exceptions.RequestException as e:
+            failure_wait_retry(e, "comments")
+        except prawcore.exceptions.ResponseException as e:
+            failure_wait_retry(e, "comments")
 
     raise ValueError("COMMENT THREAD EXITING")
 
@@ -228,10 +240,11 @@ def inbox_watch():
                     m.mark_read()
 
         except prawcore.exceptions.ServerError as e:
-            print(f"\n\n{e}")
-            print("Server Error, thread waiting 30 seconds for retry")
-            sleep(30)
-            print("Restarting Inbox Thread")
+            failure_wait_retry(e, "inbox")
+        except prawcore.exceptions.RequestException as e:
+            failure_wait_retry(e, "inbox")
+        except prawcore.exceptions.ResponseException as e:
+            failure_wait_retry(e, "inbox")
 
     raise ValueError("INBOX THREAD EXITING")
 

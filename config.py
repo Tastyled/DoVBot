@@ -1,6 +1,6 @@
 from helpers import urlify
 
-wiki_url                = "https://www.reddit.com/r/DeadorVegetable/wiki/dovbot"
+wiki_url                = "https://www.reddit.com/r/DeadorVegetable/wiki/dovbot/"
 mod_message_url         = "https://www.reddit.com/r/DeadorVegetable/comments/j1ib2l/major_update_reporting_rules_and_nsfl_tags/"
 
 config = dict(
@@ -9,17 +9,18 @@ config = dict(
     subreddit               = "DeadorVegetable",
 
     # Welcome text the bot should comment
-    welcome_comment_text    = "***\nDead or Vegetable?  \nReply to **this comment** with your opinion.\n***\n" +
+    welcome_comment_text    = "***\nDead or Vegetable? Reply to **this comment** with your opinion." +
+                              "\n\nDon't spoil the fun! Please remember to mark your spoilers with a spoiler tag >!\>!like this!\<!<\n***\n" +
                             #   "Good post? **Upvote** this comment. Bad post? **Downvote**.\n***\n" +
-                              f"^^For ^^more ^^info: [^^How ^^Voting ^^Works]({wiki_url}) ^^- [^^Latest ^^Mod ^^Update]({mod_message_url})",
+                              f"^(For more info:) [^(How Voting Works)]({wiki_url}) ^(-) [^(Latest Mod Update)]({mod_message_url})",
 
     # Comment after the voting period has ended
     edit_comment_text       = "Voting period has closed. Subject has been deemed: **%s**\n***\n" +
-                              "##Votes\n" +
+                              "#####Votes\n" +
                               "| Dead | Veggie | Neither |\n" +
                               "| --- | --- | --- |\n"
                               "| %d | %d | %d |\n***\n" +
-                              f"^^For ^^more ^^info: [^^How ^^Voting ^^Works]({wiki_url}) ^^- [^^Latest ^^Mod ^^Update]({mod_message_url})",
+                              f"^(For more info:) [^(How Voting Works)]({wiki_url}) ^(-) [^(Latest Mod Update)]({mod_message_url})",
 
     # Comment posted to a self-post
     self_comment_text       = "Thank you for your submission to r/DeadorVegetable!\n\n" +

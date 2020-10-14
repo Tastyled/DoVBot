@@ -10,7 +10,7 @@ config = dict(
 
     # Welcome text the bot should comment
     welcome_comment_text    = "***\nDead or Vegetable? Reply to **this comment** with your opinion." +
-                              "\n\nDon't spoil the fun! Please remember to mark your spoilers with a spoiler tag >!\>!like this!\<!<\n***\n" +
+                              "\n\nDon't spoil the fun! Please remember to mark news articles and other general spoilers with a spoiler tag >!\>!like this!\<!<\n***\n" +
                             #   "Good post? **Upvote** this comment. Bad post? **Downvote**.\n***\n" +
                               f"^(For more info:) [^(How Voting Works)]({wiki_url}) ^(-) [^(Latest Mod Update)]({mod_message_url})",
 

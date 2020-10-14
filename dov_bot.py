@@ -73,11 +73,13 @@ def load_db_data( sql_cursor ):
         print(f"\tAdding open session to memory - id: '{bot_comment.id}'")
         open_sessions.append(voting_session(submission, bot_comment, bot_comment_time))
 
+
 def send_message(user, subject, message):
     if len(message) > 10000:
         message = message[0:9900]
         message = message + "...\n\n(Message cut because it is too long)"
     reddit.redditor(user).message(subject, message)
+
 
 def submission_watch( subreddit ):
     # Submission waiting thread

@@ -257,7 +257,7 @@ def queue_watch( subreddit ):
     while True:
         try:
             for reported_item in subreddit.mod.reports("submissions"):
-                print(f"{reported_item.title}")
+                # print(f"{reported_item.title}")
 
                 if not reported_item.approved and len(reported_item.user_reports) >= config["report_thresh"]:
                     print("Report threshold met - removing post")

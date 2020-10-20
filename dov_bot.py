@@ -8,6 +8,7 @@ import praw, prawcore
 import sqlite3
 import string
 from time import sleep
+import datetime
 
 # Keys and Config
 from keys import keys
@@ -81,6 +82,35 @@ def send_message(user, subject, message):
     reddit.redditor(user).message(subject, message)
 
 
+def karma_needed(age):
+    y_1 = config["min_karma_1"]
+    y_2 = config["min_karma_2"]
+    x_1 = config["min_age_1"]
+    x_2 = config["min_age_2"]
+
+    m = (y_2 - y_1)/(x_2 - x_1)
+    b = (-1 * m * x_1) + y_1
+    return (m * age) + b
+
+
+def good_account(username):
+    redditor = reddit.redditor(username)
+    total_karma = redditor.comment_karma + redditor.link_karma
+
+    current_time = datetime.datetime.utcnow().timestamp()
+    account_age = current_time - redditor.created_utc
+
+    account_age /= 2629800 # convert to months
+
+    if   account_age < config["min_age_1"]:
+        return False
+    elif total_karma < config["min_karma_2"]:
+        return False
+    elif total_karma < karma_needed(account_age):
+        return False
+
+    return True
+
 def submission_watch( subreddit ):
     # Submission waiting thread
     sql_config, sql_cursor = get_db()
@@ -95,24 +125,49 @@ def submission_watch( subreddit ):
                         if submission.is_self:
                             send_message("Tastyled", f'New self-post in r/{submission.subreddit.display_name}', f'{submission.permalink}')
 
-                        # Create new voting session
-                        new_session = voting_session( submission )
-                        print("\tSession created")
-                        # Record new session
-                        open_sessions.append( new_session )
-                        print("\tAdded to memory")
+                        if good_account(submission.author):
+                            # Account is good age / good karma
 
-                        # Add to database
-                        sql_cursor.execute(
-                            "INSERT INTO submissions (submission_id, bot_comment_id, bot_comment_time) VALUES (?,?,?)",
-                            (submission.id, new_session.bot_comment.id, int(new_session.session_start_time)))
-                        print("\tAdded to database")
-                        sql_config.commit()  # commit database changes
-                        print("\tChanges committed")
+                            # Create new voting session
+                            new_session = voting_session( submission )
+                            print("\tSession created")
+                            # Record new session
+                            open_sessions.append( new_session )
+                            print("\tAdded to memory")
 
-                        # Add to synced posts
-                        synced_posts.append(submission.id)
-                        print("\tAdded to synced posts")
+                            # Add to database
+                            sql_cursor.execute(
+                                "INSERT INTO submissions (submission_id, bot_comment_id, bot_comment_time) VALUES (?,?,?)",
+                                (submission.id, new_session.bot_comment.id, int(new_session.session_start_time)))
+                            print("\tAdded to database")
+                            sql_config.commit()  # commit database changes
+                            print("\tChanges committed")
+
+                            # Add to synced posts
+                            synced_posts.append(submission.id)
+                            print("\tAdded to synced posts")
+
+                        else:
+                            # Account too new / low karma
+
+                            print("\tAccount is too new")
+                            submission.mod.remove(spam=False, mod_note="Account too new/low karma")
+
+                            welcome = submission.reply( config["low_karma_comment"] )
+                            welcome.mod.distinguish(sticky=True)
+                            print("\tComment stickied")
+
+                            # Add to database
+                            sql_cursor.execute(
+                                "INSERT INTO submissions (submission_id, bot_comment_id, bot_comment_time, closed) VALUES (?,?,?,?)",
+                                (submission.id, welcome.id, 0, 1))
+                            print("\tAdded to database")
+                            sql_config.commit()  # commit database changes
+                            print("\tChanges committed")
+
+                            # Add to synced posts
+                            synced_posts.append(submission.id)
+                            print("\tAdded to synced posts")
 
                     else:
                         # print(f"Skipping previously read post")

@@ -15,6 +15,11 @@ config = dict(
                             #   "Good post? **Upvote** this comment. Bad post? **Downvote**.\n***\n" +
                               f"^(For more info:) [^(How Voting Works)]({wiki_url}) ^(-) [^(Latest Mod Update)]({mod_message_url}) ^(-) [^(Apply to be a Mod)]({mod_app_url})",
 
+    # Welcome text if account is too new or has too little karma
+    low_karma_comment       = "Thank you for your submission to r/DeadorVegetable!\n\n" +
+                              "Your submission has been automatically removed because your account is too new OR has too little karma. Please continue to build your account to a reputable status so that you may contribute.\n\n" +
+                              "Thanks!",
+
     # Comment after the voting period has ended
     edit_comment_text       = "Voting period has closed. Subject has been deemed: **%s**\n***\n" +
                               "#####Votes\n" +
@@ -50,4 +55,10 @@ config = dict(
     dead_words              = ["dead", "ded", "rip", "dwad"],
     vegg_words              = ["vegetable", "veggie", "veggies", "veg"],
     none_words              = ["neither", "none", "nyet"],
+
+    # Min karma / age an account must be to submit posts
+    min_karma_1             = 1500,   # scalar karma value 1
+    min_karma_2             = 500,    # scalar karma value 2
+    min_age_1               = 1,      # scalar age value 1 in months
+    min_age_2               = 6,      # scalar age value 2 in months
 )

@@ -73,11 +73,13 @@ def load_db_data( sql_cursor ):
         print(f"\tAdding open session to memory - id: '{bot_comment.id}'")
         open_sessions.append(voting_session(submission, bot_comment, bot_comment_time))
 
+
 def send_message(user, subject, message):
     if len(message) > 10000:
         message = message[0:9900]
         message = message + "...\n\n(Message cut because it is too long)"
     reddit.redditor(user).message(subject, message)
+
 
 def submission_watch( subreddit ):
     # Submission waiting thread
@@ -248,6 +250,33 @@ def inbox_watch():
 
     raise ValueError("INBOX THREAD EXITING")
 
+def queue_watch( subreddit ):
+    # Mod Queue Checking Thread
+    print("Starting Queue Check Thread")
+
+    while True:
+        try:
+            for reported_item in subreddit.mod.reports("submissions"):
+                # print(f"{reported_item.title}")
+
+                if not reported_item.approved and len(reported_item.user_reports) >= config["report_thresh"]:
+                    print("Report threshold met - removing post")
+                    reported_item.mod.remove(spam=False, mod_note="Report Threshold Met - Need moderator approval")
+                    Message = config['automod_mail_message'] % (len(reported_item.user_reports), reported_item.title, reported_item.author, reported_item.permalink)
+                    Message += "  \nReports:  \n"
+                    for report in reported_item.user_reports:
+                        Message += f"{report}  \n"
+                    subreddit.message("I Removed a Post", Message )
+
+
+        except prawcore.exceptions.ServerError as e:
+            failure_wait_retry(e, "queue")
+        except prawcore.exceptions.RequestException as e:
+            failure_wait_retry(e, "queue")
+        except prawcore.exceptions.ResponseException as e:
+            failure_wait_retry(e, "queue")
+
+    raise ValueError("QUEUE THREAD EXITING")
 
 # Subreddit Work
 def main():
@@ -265,16 +294,19 @@ def main():
         session_thread      = threading.Thread(target=session_watch)
         comment_thread      = threading.Thread(target=comment_watch, args=(subreddit,))
         inbox_thread        = threading.Thread(target=inbox_watch)
+        queue_thread        = threading.Thread(target=queue_watch, args = (subreddit,))
 
         submission_thread.setDaemon(True)
         session_thread.setDaemon(True)
         comment_thread.setDaemon(True)
         inbox_thread.setDaemon(True)
+        queue_thread.setDaemon(True)
 
         submission_thread.start()
         session_thread.start()
         comment_thread.start()
         inbox_thread.start()
+        queue_thread.start()
 
         while True: sleep(100)
 

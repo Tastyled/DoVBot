@@ -2,6 +2,7 @@ from helpers import urlify
 
 wiki_url                = "https://www.reddit.com/r/DeadorVegetable/wiki/dovbot/"
 mod_message_url         = "https://www.reddit.com/r/DeadorVegetable/comments/j1ib2l/major_update_reporting_rules_and_nsfl_tags/"
+mod_app_url             = "https://www.reddit.com/r/DeadorVegetable/comments/jcm9pj/rdeadorvegetable_is_looking_to_expand_the_mod_team/"
 
 config = dict(
     # Subreddit to monitor
@@ -10,9 +11,9 @@ config = dict(
 
     # Welcome text the bot should comment
     welcome_comment_text    = "***\nDead or Vegetable? Reply to **this comment** with your opinion." +
-                              "\n\nDon't spoil the fun! Please remember to mark your spoilers with a spoiler tag >!\>!like this!\<!<\n***\n" +
+                              "\n\nDon't spoil the fun! Please remember to mark news articles and other general spoilers with a spoiler tag >!\>!like this!\<!<\n***\n" +
                             #   "Good post? **Upvote** this comment. Bad post? **Downvote**.\n***\n" +
-                              f"^(For more info:) [^(How Voting Works)]({wiki_url}) ^(-) [^(Latest Mod Update)]({mod_message_url})",
+                              f"^(For more info:) [^(How Voting Works)]({wiki_url}) ^(-) [^(Latest Mod Update)]({mod_message_url}) ^(-) [^(Apply to be a Mod)]({mod_app_url})",
 
     # Comment after the voting period has ended
     edit_comment_text       = "Voting period has closed. Subject has been deemed: **%s**\n***\n" +
@@ -20,7 +21,7 @@ config = dict(
                               "| Dead | Veggie | Neither |\n" +
                               "| --- | --- | --- |\n"
                               "| %d | %d | %d |\n***\n" +
-                              f"^(For more info:) [^(How Voting Works)]({wiki_url}) ^(-) [^(Latest Mod Update)]({mod_message_url})",
+                              f"^(For more info:) [^(How Voting Works)]({wiki_url}) ^(-) [^(Latest Mod Update)]({mod_message_url}) ^(-) [^(Apply to be a Mod)]({mod_app_url})",
 
     # Comment posted to a self-post
     self_comment_text       = "Thank you for your submission to r/DeadorVegetable!\n\n" +
@@ -35,6 +36,12 @@ config = dict(
                               "%s" +
                               urlify("\"  \nLink: www.reddit.com") +
                               "%s) ",
+
+    # Automatic Removal Report Threshold
+    report_thresh           = 10,
+
+    # Message to modmail when Report Threshold is met
+    automod_mail_message    = "Hello fellow moderators,\n\nI have removed a post for you. It currently has %d reports. Please take a look to see if I did good.\n\nTitle: '%s'  \nUser: /u/%s  \nLink: www.reddit.com%s",
 
     # Duration of voting period in minutes
     minutes                 = 1440,

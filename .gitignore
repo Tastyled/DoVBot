@@ -2,3 +2,4 @@ __pycache__/
 keys.py
 logs/
 *.db
+.DS_Store

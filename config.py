@@ -43,7 +43,7 @@ config = dict(
                               "%s) ",
 
     # Automatic Removal Report Threshold
-    report_thresh           = 10,
+    report_thresh           = 7,
 
     # Message to modmail when Report Threshold is met
     automod_mail_message    = "Hello fellow moderators,\n\nI have removed a post for you. It currently has %d reports. Please take a look to see if I did good.\n\nTitle: '%s'  \nUser: /u/%s  \nLink: www.reddit.com%s",

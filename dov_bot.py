@@ -36,12 +36,6 @@ synced_posts = []
 open_sessions = []
 
 
-# Get list of banned words
-banned_words = []
-for line in open("banned_words.txt", 'r'):
-    banned_words.append(line.strip())
-
-
 def get_db():
     # Database Connection and Table Creation
     sql_config = sqlite3.connect('submissions.db')
@@ -238,35 +232,12 @@ def comment_watch( subreddit ):
                     body = body.translate(str.maketrans('', '', string.punctuation))
                     body = body.split()
 
-                    # Check comment for any banned words
-                    if any(word in body for word in banned_words):
-                        comment.report("Banned word found in text")
-                        # send_message("Tastyled", "Potential Hate Speach Detected",
-                        # "Potential Hate Speach Detected\n\n" +
-                        # f"User: /u/{comment.author}  \n" +
-                        # f"Comment: '{comment.body}'\n\n" +
-                        # f"{comment.permalink}")
-
                     # Check comment for vote word
                     if comment.parent_id == comment.link_id:                            # Check only top level comments
                         if len(body) == 1 and any(word in body for word in vote_words): # Check if comment is one word vote reply
 
                             print("Removing spam comment")
                             comment.mod.remove(spam=False, mod_note="Voting outside of voting thread")
-
-                            # print("Sending Message to user")
-                            # send_message(comment.author.name, "Notice of Comment Removal",
-                            # f"Thank you for you participating in /r/DeadorVegetable!\n\n" +
-                            # "Unfortunately your comment has been removed because we are trying to keep top level comments reserved for discussion. " +
-                            # "If you are trying to vote on the post's classification please reply to /u/DOVBOT's comment, not the post itself. " +
-                            # "Keep in mind, if the post is more than 24 hours old, you can no longer vote.\n\n" +
-                            # "If you think this was done in error, please respond to this message and your comment will be reexamined by the mods.\n\n"
-                            # f"Comment: \"{comment.body}\"  \n"
-                            # f"Link: {comment.permalink}"
-                            # )
-
-                            # send_message("Tastyled", "Comment Removed",
-                            # f"Comment Removed\n\nuser: /u/{comment.author.name}  \nlink: {comment.permalink}  \ncomment: \"{comment.body}\"")
 
                             print("Done")
 

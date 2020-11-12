@@ -236,3 +236,4 @@ class voting_session:
             elif self.submission.author is None:
                 print(f"Post removed - Closing session - '{self.bot_comment.id}'")
                 self.is_open = False
+                self.bot_comment.delete()

@@ -1,8 +1,7 @@
 from helpers import urlify
 
 wiki_url                = "https://www.reddit.com/r/DeadorVegetable/wiki/dovbot/"
-mod_message_url         = "https://www.reddit.com/r/DeadorVegetable/comments/j1ib2l/major_update_reporting_rules_and_nsfl_tags/"
-mod_app_url             = "https://www.reddit.com/r/DeadorVegetable/comments/jcm9pj/rdeadorvegetable_is_looking_to_expand_the_mod_team/"
+mod_message_url         = "https://www.reddit.com/r/DeadorVegetable/comments/jidohi/dovs_tastiest_vegetable_competition/"
 
 config = dict(
     # Subreddit to monitor
@@ -13,7 +12,7 @@ config = dict(
     welcome_comment_text    = "***\nDead or Vegetable? Reply to **this comment** with your opinion." +
                               "\n\nPlease remember to mark news articles and other general spoilers with a spoiler tag >!\>!like this!\<!<\n***\n" +
                             #   "Good post? **Upvote** this comment. Bad post? **Downvote**.\n***\n" +
-                              f"^(For more info:) [^(How Voting Works)]({wiki_url}) ^(-) [^(Latest Mod Update)]({mod_message_url}) ^(-) [^(Apply to be a Mod)]({mod_app_url})",
+                              f"^(For more info:) [^(How Voting Works)]({wiki_url}) ^(-) [^(Latest Mod Update)]({mod_message_url})",
 
     # Welcome text if account is too new or has too little karma
     low_karma_comment       = "Thank you for your submission to r/DeadorVegetable!\n\n" +
@@ -26,7 +25,7 @@ config = dict(
                               "| Dead | Veggie | Neither |\n" +
                               "| --- | --- | --- |\n"
                               "| %d | %d | %d |\n***\n" +
-                              f"^(For more info:) [^(How Voting Works)]({wiki_url}) ^(-) [^(Latest Mod Update)]({mod_message_url}) ^(-) [^(Apply to be a Mod)]({mod_app_url})",
+                              f"^(For more info:) [^(How Voting Works)]({wiki_url}) ^(-) [^(Latest Mod Update)]({mod_message_url})",
 
     # Comment posted to a self-post
     self_comment_text       = "Thank you for your submission to r/DeadorVegetable!\n\n" +

@@ -117,7 +117,7 @@ def submission_watch( subreddit ):
                     if submission.id not in synced_posts:  # Check if submission wasn't synced yet
                         print(f"New post from user: '{submission.author}' id: '{submission.id}'")
                         if submission.is_self:
-                            send_message("Tastyled", f'New self-post in r/{submission.subreddit.display_name}', f'{submission.permalink}')
+                            send_message("Tastyled", f'New self-post in r/{submission.subreddit.display_name}', f'www.reddit.com/{submission.id}')
 
                         if good_account(submission.author):
                             # Account is good age / good karma
@@ -288,7 +288,7 @@ def queue_watch( subreddit ):
                 if not reported_item.approved and len(reported_item.user_reports) >= config["report_thresh"]:
                     print("Report threshold met - removing post")
                     reported_item.mod.remove(spam=False, mod_note="Report Threshold Met - Need moderator approval")
-                    Message = config['automod_mail_message'] % (len(reported_item.user_reports), reported_item.title, reported_item.author, reported_item.permalink)
+                    Message = config['automod_mail_message'] % (len(reported_item.user_reports), reported_item.title, reported_item.author, reported_item.id)
                     Message += "  \nReports:  \n"
                     for report in reported_item.user_reports:
                         Message += f"{report}  \n"

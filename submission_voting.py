@@ -12,9 +12,10 @@ from helpers import urlify
 
 class voting_session:
 
-    def __init__(self, submission, bot_comment=None, session_start_time=None):
+    def __init__(self, submission, low_karma_flag, bot_comment=None, session_start_time=None):
         self.submission = submission
         self.is_self_post = submission.is_self
+        self.low_karma_flag = low_karma_flag
 
         self.voters = []
         self.dead_score = 0
@@ -32,15 +33,31 @@ class voting_session:
             self.is_open = False
             self.session_start_time = 0
 
-            if self.is_self_post:
+            if self.low_karma_flag:
+                print("\tUser has too little karma")
+                self.__post_low_karma_comment()
+                submission.mod.remove(spam=False, mod_note="Account too new/low karma")
+
+            elif self.is_self_post:
                 print("\tPost is a self")
                 self.__post_self_comment()
-                submission.mod.remove()
+                submission.mod.remove(spam=False, mod_note="Text post - require mod approval")
+
             else:
                 print("\tPost is regular")
                 self.__post_welcome_comment()
         else:
             raise ValueError("voting_session - __init__() - Bot comment or session start time received without counterpart")
+
+    def __reset_session(self):
+        self.low_karma_flag = False
+        self.voters = []
+        self.dead_score = 0
+        self.vegg_score = 0
+        self.none_score = 0
+        self.bot_comment = None
+        self.is_open = False
+        self.session_start_time = 0
 
     def __post_welcome_comment(self):
         if self.bot_comment is None:
@@ -77,6 +94,25 @@ class voting_session:
             self.session_start_time = time()
         else:
             raise ValueError("__post_self_comment() - Tried to post more than one welcome comment")
+
+    def __post_low_karma_comment(self):
+        if self.bot_comment is None:
+            # Post bot low karma comment
+            self.bot_comment = self.submission.reply( config["low_karma_comment"] )
+            print(f"\tComment added - id: '{self.bot_comment.id}'")
+
+            # Distinguish and sticky comment
+            self.bot_comment.mod.distinguish(sticky=True)
+            print("\tComment stickied")
+
+            # Disable inbox replies
+            self.bot_comment.disable_inbox_replies()
+
+            self.is_open = True
+            self.session_start_time = time()
+        else:
+            raise ValueError("__post_low_karma_comment() - Tried to post more than one welcome comment")
+
 
     def __parse_tally(self, reply):
         voter = reply.author
@@ -198,8 +234,6 @@ class voting_session:
             self.bot_comment.delete()
 
 
-
-
     def check_session(self):
 
         # Mark post as NSFW is NSFL is flaired
@@ -209,31 +243,46 @@ class voting_session:
             # if not self.submission.spoiler:
             #     self.submission.mod.spoiler()
 
-        # For regular posts
-        if not self.is_self_post:
-            # Check if post was removed
-            if self.submission.author is None: # or self.submission.removed:
-                print(f"Post removed - Closing session - '{self.bot_comment.id}'")
+
+        # Check if post was deleted
+        if self.submission.author is None:
+            print(f"Post removed - Closing session - '{self.bot_comment.id}'")
+
+            # For self/low karma posts
+            if self.is_self_post or self.low_karma_flag:
+                self.is_open = False
+                self.bot_comment.delete()
+
+            # For regular posts
+            else:
                 self.__close_voting_period(removed=True)
 
-            # Check if session time is up
-            elif ((time() - self.session_start_time) / 60) > config["minutes"]:
-                print(f"Time is up - Closing session - '{self.bot_comment.id}'")
+        # Check if session time is up
+        elif ((time() - self.session_start_time) / 60) > config["minutes"]:
+            print(f"Time is up - Closing session - '{self.bot_comment.id}'")
+
+            # For self/low karma posts
+            if self.is_self_post or self.low_karma_flag:
+                self.is_open = False
+                self.bot_comment.delete()
+
+            # For regular posts
+            else:
                 self.__close_voting_period()
 
-        # For self posts
-        else:
-            if self.submission.approved:
-                print("Self post approved")
-                self.is_open = False
-                self.bot_comment.delete()
+        # Check for self post approval
+        if self.is_self_post and self.submission.approved:
+            print("Self post approved")
+            self.is_open = False
+            self.bot_comment.delete()
 
-            # Check if session time is up
-            elif ((time() - self.session_start_time) / 60) > config["minutes"]:
-                print(f"Time is up - Closing session - '{self.bot_comment.id}'")
-                self.is_open = False
+        # Check for low karma post approval
+        elif self.low_karma_flag and self.submission.approved:
+            print("Low karma post approved")
 
-            elif self.submission.author is None:
-                print(f"Post removed - Closing session - '{self.bot_comment.id}'")
-                self.is_open = False
-                self.bot_comment.delete()
+            # Submission will now act as a regular post, reset all values
+            self.bot_comment.delete()
+            self.__reset_session()
+
+            # Post voting welcome comment
+            self.__post_welcome_comment()

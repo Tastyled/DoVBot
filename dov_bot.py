@@ -41,7 +41,8 @@ def get_db():
         sql_cursor.execute(
             "ALTER TABLE 'submissions' ADD COLUMN low_karma INT")
     except sqlite3.Error as err:
-        print(f"{err} - ignoring")
+        # print(f"{err} - ignoring")
+        pass
     return sql_config, sql_cursor
 
 

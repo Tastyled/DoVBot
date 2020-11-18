@@ -243,6 +243,9 @@ class voting_session:
             # if not self.submission.spoiler:
             #     self.submission.mod.spoiler()
 
+        # Re-sticky if another comment is not stickied already
+        if not self.submission.comments[0].stickied:
+            self.bot_comment.mod.distinguish(sticky=True)
 
         # Check if post was deleted
         if self.submission.author is None:

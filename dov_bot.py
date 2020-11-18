@@ -163,11 +163,10 @@ def submission_watch( subreddit ):
                     else:
                         # print(f"Skipping previously read post")
                         pass
-        except prawcore.exceptions.ServerError as e:
-            failure_wait_retry(e, "submissions")
-        except prawcore.exceptions.RequestException as e:
-            failure_wait_retry(e, "submissions")
-        except prawcore.exceptions.ResponseException as e:
+
+        except( prawcore.exceptions.ServerError,
+                prawcore.exceptions.RequestException,
+                prawcore.exceptions.ResponseException ) as e:
             failure_wait_retry(e, "submissions")
 
 
@@ -222,11 +221,9 @@ def session_watch():
                     del session
                     print("\tRemoved from memory")
 
-        except prawcore.exceptions.ServerError as e:
-            failure_wait_retry(e, "sessions")
-        except prawcore.exceptions.RequestException as e:
-            failure_wait_retry(e, "sessions")
-        except prawcore.exceptions.ResponseException as e:
+        except( prawcore.exceptions.ServerError,
+                prawcore.exceptions.RequestException,
+                prawcore.exceptions.ResponseException ) as e:
             failure_wait_retry(e, "sessions")
 
     raise ValueError("SESSION THREAD EXITING")
@@ -254,11 +251,9 @@ def comment_watch( subreddit ):
 
                             print("Done")
 
-        except prawcore.exceptions.ServerError as e:
-            failure_wait_retry(e, "comments")
-        except prawcore.exceptions.RequestException as e:
-            failure_wait_retry(e, "comments")
-        except prawcore.exceptions.ResponseException as e:
+        except( prawcore.exceptions.ServerError,
+                prawcore.exceptions.RequestException,
+                prawcore.exceptions.ResponseException ) as e:
             failure_wait_retry(e, "comments")
 
     raise ValueError("COMMENT THREAD EXITING")
@@ -280,11 +275,9 @@ def inbox_watch():
                         f"{m.body}" )
                     m.mark_read()
 
-        except prawcore.exceptions.ServerError as e:
-            failure_wait_retry(e, "inbox")
-        except prawcore.exceptions.RequestException as e:
-            failure_wait_retry(e, "inbox")
-        except prawcore.exceptions.ResponseException as e:
+        except( prawcore.exceptions.ServerError,
+                prawcore.exceptions.RequestException,
+                prawcore.exceptions.ResponseException ) as e:
             failure_wait_retry(e, "inbox")
 
     raise ValueError("INBOX THREAD EXITING")
@@ -307,12 +300,9 @@ def queue_watch( subreddit ):
                         Message += f"{report}  \n"
                     subreddit.message("I Removed a Post", Message )
 
-
-        except prawcore.exceptions.ServerError as e:
-            failure_wait_retry(e, "queue")
-        except prawcore.exceptions.RequestException as e:
-            failure_wait_retry(e, "queue")
-        except prawcore.exceptions.ResponseException as e:
+        except( prawcore.exceptions.ServerError,
+                prawcore.exceptions.RequestException,
+                prawcore.exceptions.ResponseException ) as e:
             failure_wait_retry(e, "queue")
 
     raise ValueError("QUEUE THREAD EXITING")

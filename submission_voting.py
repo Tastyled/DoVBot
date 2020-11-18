@@ -243,7 +243,7 @@ class voting_session:
             # if not self.submission.spoiler:
             #     self.submission.mod.spoiler()
 
-        # Re-sticky if another comment is not stickied already
+        # Re-sticky if a comment is not stickied already
         if not self.submission.comments[0].stickied:
             self.bot_comment.mod.distinguish(sticky=True)
 
@@ -272,6 +272,8 @@ class voting_session:
             # For regular posts
             else:
                 self.__close_voting_period()
+
+            return
 
         # Check for self post approval
         if self.is_self_post and self.submission.approved:

@@ -45,6 +45,22 @@ def get_db():
     return sql_config, sql_cursor
 
 
+def in_whitelist( subreddit, redditor ):
+    username = redditor.name.lower()
+
+    # Get Wiki
+    wl_wiki = subreddit.wiki["whitelist"]
+    whitelist = (wl_wiki.content_md)
+
+    # Parse wiki for whitelist
+    for line in whitelist.splitlines():
+        line = line.lower().rstrip()
+        if line == username:
+            print("\tUser in whitelist")
+            return True
+    return False
+
+
 def failure_wait_retry(error, threadname):
     print(f"\n\n{error}")
     print(f"{threadname} waiting 30 seconds for retry")
@@ -119,8 +135,9 @@ def submission_watch( subreddit ):
                         if submission.is_self:
                             send_message("Tastyled", f'New self-post in r/{submission.subreddit.display_name}', f'www.reddit.com/{submission.id}')
 
-                        if good_account(submission.author):
-                            # Account is good age / good karma
+
+                        if in_whitelist( subreddit, submission.author ) or good_account( submission.author ):
+                            # Account is good age / good karma / whitelisted
 
                             # Create new voting session
                             new_session = voting_session( submission )

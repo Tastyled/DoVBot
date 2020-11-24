@@ -289,12 +289,14 @@ def queue_watch( subreddit ):
     while True:
         try:
             for reported_item in subreddit.mod.reports("submissions"):
-                # print(f"{reported_item.title}")
+                total_reports = 0
+                for report in reported_item.user_reports:
+                    total_reports += report[1]
 
-                if not reported_item.approved and len(reported_item.user_reports) >= config["report_thresh"]:
+                if not reported_item.approved and total_reports >= config["report_thresh"]:
                     print("Report threshold met - removing post")
                     reported_item.mod.remove(spam=False, mod_note="Report Threshold Met - Need moderator approval")
-                    Message = config['automod_mail_message'] % (len(reported_item.user_reports), reported_item.title, reported_item.author, reported_item.id)
+                    Message = config['automod_mail_message'] % (total_reports, reported_item.title, reported_item.author, reported_item.id)
                     Message += "  \nReports:  \n"
                     for report in reported_item.user_reports:
                         Message += f"{report}  \n"

@@ -239,8 +239,6 @@ def comment_watch( subreddit ):
             for comment in subreddit.stream.comments(skip_existing=True):
                 if comment is not None and comment.author != "DOVBOT":
                     body = comment.body.lower()
-                    body = body.translate(str.maketrans('', '', string.punctuation))
-                    body = body.split()
 
                     # Check comment for vote word
                     if comment.parent_id == comment.link_id:                            # Check only top level comments

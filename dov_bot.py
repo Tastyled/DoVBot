@@ -237,22 +237,51 @@ def comment_watch( subreddit ):
     while True:
         try:
             for comment in subreddit.stream.comments(skip_existing=True):
-                if comment is not None:
+                if comment is not None and comment.author != "DOVBOT":
                     body = comment.body.lower()
                     body = body.translate(str.maketrans('', '', string.punctuation))
                     body = body.split()
 
                     # Check comment for vote word
                     if comment.parent_id == comment.link_id:                            # Check only top level comments
-                        if len(body) == 1 and any(word in body for word in vote_words): # Check if comment is one word vote reply
+                        body_check = body.translate(str.maketrans('', '', string.punctuation))
+                        body_check = body_check.split()
+                        if len(body_check) == 1 and any(word in body_check for word in vote_words): # Check if comment is one word vote reply
 
                             print("Removing spam comment")
                             comment.mod.remove(spam=False, mod_note="Voting outside of voting thread")
 
                             print("Done")
-                    elif reddit.comment(comment.parent_id.replace("t1_",'')).author == "DOVBOT":
-                        comment.mod.remove(spam=False, mod_note="Vote anonymized")
-                        print("Removed vote")
+                    else:                                                               # Not a top level comment
+                        parent = reddit.comment(comment.parent_id.replace("t1_",''))
+                        if parent.author == "DOVBOT" and parent.parent_id == comment.link_id: # Check if reply to DOVBOT vote thread
+                            comment.mod.remove(spam=False, mod_note="Vote anonymized")
+                            print("Removed vote")
+                            break
+
+                    bad_starter = False
+                    line_break = False
+                    body_check = body.split("\n\n")
+                    for line in body_check:
+                        if ">! " in line:
+                            bad_starter = True
+                        if ">!" in line and "!<" not in line:
+                            line_break = True
+
+                    if bad_starter or line_break:
+                        message = "Uh oh, you didn't apply the spoiler tag correctly :(\n\n"
+                        if bad_starter:
+                            message += "Make sure to not leave any spaces between `>!` and `!<`. `>!It should look like this.!<`\n\n"
+                        if bad_starter and line_break:
+                            message += "ALSO\n\n"
+                        if line_break:
+                            message += "You can't have more than one line break between the spoiler tags.  \n>!See, \n\nthis doesn't work.!<\n\n"
+
+                        message += "I've removed your comment for now. Just reply to me and after you fix it and a moderator will reapprove your comment. Thanks! :)"
+
+                        comment.mod.remove(spam=False, mod_note="Spoiler tag applied incorrectly")
+                        reply = comment.reply(message)
+                        reply.mod.distinguish()
 
         except( prawcore.exceptions.ServerError,
                 prawcore.exceptions.RequestException,
@@ -271,6 +300,11 @@ def inbox_watch():
             for m in reddit.inbox.unread():
                 if m is not None:
                     print("Message Received - Forwarding")
+                    if m.was_comment:
+                        comment = reddit.comment(m.id)
+                        dov_comment = reddit.comment(comment.parent_id.replace("t1_",''))
+                        dov_comment.report("Please check if spoiler tag is applied correctly.")
+
                     send_message("Tastyled",
                         f"Message received from user: /u/{m.author}",
                         f"/u/{m.author}  \n" +

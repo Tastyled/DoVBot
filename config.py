@@ -1,7 +1,7 @@
 from helpers import urlify
 
 wiki_url                = "https://www.reddit.com/r/DeadorVegetable/wiki/dovbot/"
-mod_message_url         = "https://www.reddit.com/r/DeadorVegetable/comments/jidohi/dovs_tastiest_vegetable_competition/"
+mod_message_url         = "https://www.reddit.com/k0fswo/"
 
 config = dict(
     # Subreddit to monitor
@@ -10,7 +10,9 @@ config = dict(
 
     # Welcome text the bot should comment
     welcome_comment_text    = "***\nDead or Vegetable? Reply to **this comment** with your opinion." +
-                              "\n\nPlease remember to mark news articles and other general spoilers with a spoiler tag >!\>!like this!\<!<\n***\n" +
+                              "\n\nWe are trying something new. All votes cast will be hidden in order to make voting anonymous. If you have any feedback or suggestions, " +
+                              "[let us know](https://www.reddit.com/message/compose?to=DOVBOT&subject=Feedback)." +
+                              "\n\nAs always, please remember to mark news articles and other general spoilers with a spoiler tag \>!like this!\<\n***\n" +
                             #   "Good post? **Upvote** this comment. Bad post? **Downvote**.\n***\n" +
                               f"^(For more info:) [^(How Voting Works)]({wiki_url}) ^(-) [^(Latest Mod Update)]({mod_message_url})",
 
@@ -23,7 +25,7 @@ config = dict(
     edit_comment_text       = "Voting period has closed. Subject has been deemed: **%s**\n***\n" +
                               "#####Votes\n" +
                               "| Dead | Veggie | Neither |\n" +
-                              "| --- | --- | --- |\n"
+                              "| --- | --- | --- |\n" +
                               "| %d | %d | %d |\n***\n" +
                               f"^(For more info:) [^(How Voting Works)]({wiki_url}) ^(-) [^(Latest Mod Update)]({mod_message_url})",
 

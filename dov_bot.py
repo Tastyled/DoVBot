@@ -250,6 +250,9 @@ def comment_watch( subreddit ):
                             comment.mod.remove(spam=False, mod_note="Voting outside of voting thread")
 
                             print("Done")
+                    elif reddit.comment(comment.parent_id.replace("t1_",'')).author == "DOVBOT":
+                        comment.mod.remove(spam=False, mod_note="Vote anonymized")
+                        print("Removed vote")
 
         except( prawcore.exceptions.ServerError,
                 prawcore.exceptions.RequestException,

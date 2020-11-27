@@ -257,7 +257,7 @@ def comment_watch( subreddit ):
                         if parent.author == "DOVBOT" and parent.parent_id == comment.link_id: # Check if reply to DOVBOT vote thread
                             comment.mod.remove(spam=False, mod_note="Vote anonymized")
                             print("Removed vote")
-                            break
+                            continue
 
                     bad_starter = False
                     line_break = False

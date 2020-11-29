@@ -35,13 +35,13 @@ class voting_session:
 
             if self.low_karma_flag:
                 print("\tUser has too little karma")
-                self.__post_low_karma_comment()
                 submission.mod.remove(spam=False, mod_note="Account too new/low karma")
+                self.__post_low_karma_comment()
 
             elif self.is_self_post:
                 print("\tPost is a self")
-                self.__post_self_comment()
                 submission.mod.remove(spam=False, mod_note="Text post - require mod approval")
+                self.__post_self_comment()
 
             else:
                 print("\tPost is regular")

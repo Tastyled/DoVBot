@@ -168,6 +168,8 @@ def submission_watch( subreddit ):
                 prawcore.exceptions.RequestException,
                 prawcore.exceptions.ResponseException ) as e:
             failure_wait_retry(e, "submissions")
+        except Exception as e:
+            send_message("Tastyled", "Exception thrown", f"Exception thrown in submissions:\n\n{e}")
 
 
     raise ValueError("SUBMISSION THREAD EXITING")
@@ -225,6 +227,8 @@ def session_watch():
                 prawcore.exceptions.RequestException,
                 prawcore.exceptions.ResponseException ) as e:
             failure_wait_retry(e, "sessions")
+        except Exception as e:
+            send_message("Tastyled", "Exception thrown", f"Exception thrown in sessions:\n\n{e}")
 
     raise ValueError("SESSION THREAD EXITING")
 
@@ -285,6 +289,8 @@ def comment_watch( subreddit ):
                 prawcore.exceptions.RequestException,
                 prawcore.exceptions.ResponseException ) as e:
             failure_wait_retry(e, "comments")
+        except Exception as e:
+            send_message("Tastyled", "Exception thrown", f"Exception thrown in comments:\n\n{e}")
 
     raise ValueError("COMMENT THREAD EXITING")
 
@@ -314,6 +320,8 @@ def inbox_watch():
                 prawcore.exceptions.RequestException,
                 prawcore.exceptions.ResponseException ) as e:
             failure_wait_retry(e, "inbox")
+        except Exception as e:
+            send_message("Tastyled", "Exception thrown", f"Exception thrown in inbox:\n\n{e}")
 
     raise ValueError("INBOX THREAD EXITING")
 
@@ -341,6 +349,8 @@ def queue_watch( subreddit ):
                 prawcore.exceptions.RequestException,
                 prawcore.exceptions.ResponseException ) as e:
             failure_wait_retry(e, "queue")
+        except Exception as e:
+            send_message("Tastyled", "Exception thrown", f"Exception thrown in queue:\n\n{e}")
 
     raise ValueError("QUEUE THREAD EXITING")
 

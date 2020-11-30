@@ -289,8 +289,8 @@ class voting_session:
         elif ((time() - self.session_start_time) / 60) > config["minutes"]:
             print(f"Time is up - Closing session - '{self.bot_comment.id}'")
 
-            # For self/low karma posts
-            if self.is_self_post or self.low_karma_flag:
+            # For self/low karma/removed posts
+            if self.is_self_post or self.low_karma_flag or self.submission.removed:
                 self.is_open = False
                 self.bot_comment.delete()
 
@@ -302,7 +302,7 @@ class voting_session:
 
         # Check for update interval
         elif ((time() - self.prev_update_time) / 60) > config["update_interval"]:
-            if not self.is_self_post and not self.low_karma_flag:
+            if not self.is_self_post and not self.low_karma_flag and not self.submission.removed:
                 print(f"Updating count - '{self.bot_comment.id}'")
                 self.__count_replies()
                 self.update_count()

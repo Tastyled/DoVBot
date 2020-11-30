@@ -240,7 +240,8 @@ class voting_session:
             # Next edit the bot comment to display votes
             print("\tEditing Comment")
             edit_comment = config["closed_comment_header"] % ( winner ) + \
-                config["histogram_layout"] % ( self.dead_score, self.vegg_score, self.none_score )
+                config["histogram_layout"] % ( self.dead_score, self.vegg_score, self.none_score ) + \
+                config["comment_footer"]
             self.bot_comment.edit( edit_comment )
 
             # Set the submission flair to reflect how users voted

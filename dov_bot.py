@@ -107,6 +107,9 @@ def karma_needed(age):
 
 def good_account( redditor ):
 
+    if redditor.comment_karma < config["min_comment_karma"] or redditor.link_karma < config["min_link_karma"]:
+        return False
+
     total_karma = redditor.comment_karma + redditor.link_karma
 
     current_time = datetime.datetime.utcnow().timestamp()
@@ -170,6 +173,7 @@ def submission_watch( subreddit ):
             failure_wait_retry(e, "submissions")
         except Exception as e:
             send_message("Tastyled", "Exception thrown", f"Exception thrown in submissions:\n\n{e}")
+            raise
 
 
     raise ValueError("SUBMISSION THREAD EXITING")
@@ -229,6 +233,7 @@ def session_watch():
             failure_wait_retry(e, "sessions")
         except Exception as e:
             send_message("Tastyled", "Exception thrown", f"Exception thrown in sessions:\n\n{e}")
+            raise
 
     raise ValueError("SESSION THREAD EXITING")
 
@@ -291,6 +296,7 @@ def comment_watch( subreddit ):
             failure_wait_retry(e, "comments")
         except Exception as e:
             send_message("Tastyled", "Exception thrown", f"Exception thrown in comments:\n\n{e}")
+            raise
 
     raise ValueError("COMMENT THREAD EXITING")
 
@@ -322,6 +328,7 @@ def inbox_watch():
             failure_wait_retry(e, "inbox")
         except Exception as e:
             send_message("Tastyled", "Exception thrown", f"Exception thrown in inbox:\n\n{e}")
+            raise
 
     raise ValueError("INBOX THREAD EXITING")
 
@@ -351,6 +358,7 @@ def queue_watch( subreddit ):
             failure_wait_retry(e, "queue")
         except Exception as e:
             send_message("Tastyled", "Exception thrown", f"Exception thrown in queue:\n\n{e}")
+            raise
 
     raise ValueError("QUEUE THREAD EXITING")
 

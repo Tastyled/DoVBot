@@ -49,6 +49,8 @@ class voting_session:
         else:
             raise ValueError("voting_session - __init__() - Bot comment or session start time received without counterpart")
 
+        self.prev_update_time = self.session_start_time
+
     def __reset_session(self):
         self.low_karma_flag = False
         self.voters = []
@@ -58,11 +60,20 @@ class voting_session:
         self.bot_comment = None
         self.is_open = False
         self.session_start_time = 0
+        self.prev_update_time = 0
+
+
+    def __reset_votes(self):
+        self.voters = []
+        self.dead_score = 0
+        self.vegg_score = 0
+        self.none_score = 0
+
 
     def __post_welcome_comment(self):
         if self.bot_comment is None:
             # Post bot welcome comment
-            self.bot_comment = self.submission.reply( config['welcome_comment_text'] )
+            self.bot_comment = self.submission.reply( config['welcome_comment_text'] + config["comment_footer"])
             print(f"\tComment added - id: '{self.bot_comment.id}'")
 
             # Distinguish and sticky comment
@@ -74,8 +85,10 @@ class voting_session:
 
             self.is_open = True
             self.session_start_time = time()
+            self.prev_update_time = self.session_start_time
         else:
             raise ValueError("__post_welcome_comment() - Tried to post more than one welcome comment")
+
 
     def __post_self_comment(self):
         if self.bot_comment is None:
@@ -94,6 +107,7 @@ class voting_session:
             self.session_start_time = time()
         else:
             raise ValueError("__post_self_comment() - Tried to post more than one welcome comment")
+
 
     def __post_low_karma_comment(self):
         if self.bot_comment is None:
@@ -147,7 +161,7 @@ class voting_session:
             else:
                 print("\t\tUser voted for both or no options - Ignored")
         else:
-            print("\t\tUser tried to vote more than once - Skipped")
+            print("\t\tUser vote already counted - Skipped")
 
 
     def __count_replies(self):
@@ -179,6 +193,7 @@ class voting_session:
                 return "Hard to Tell"
         else:
             raise ValueError("__get_winner() - Tried to get winner before end of voting period")
+
 
     def __set_submission_flair(self, winner):
         print("\tSetting Submission Flair")
@@ -223,7 +238,8 @@ class voting_session:
 
             # Next edit the bot comment to display votes
             print("\tEditing Comment")
-            edit_comment = config["edit_comment_text"] % ( winner, self.dead_score, self.vegg_score, self.none_score )
+            edit_comment = config["closed_comment_header"] % ( winner ) + \
+                config["histogram_layout"] % ( self.dead_score, self.vegg_score, self.none_score )
             self.bot_comment.edit( edit_comment )
 
             # Set the submission flair to reflect how users voted
@@ -232,6 +248,15 @@ class voting_session:
         else:
             # If post was removed or deleted delete the bot comment
             self.bot_comment.delete()
+
+
+    def update_count(self):
+        edit_comment = config["welcome_comment_text"] + \
+            "\n***\nHere's how the score is looking currently:\n\n" + \
+            config["histogram_layout"] % (self.dead_score, self.vegg_score, self.none_score) + \
+            config["comment_footer"]
+        self.bot_comment.edit( edit_comment )
+        print("\tCount Updated")
 
 
     def check_session(self):
@@ -274,6 +299,14 @@ class voting_session:
                 self.__close_voting_period()
 
             return
+
+        # Check for update interval
+        elif ((time() - self.prev_update_time) / 60) > config["update_interval"]:
+            if not self.is_self_post and not self.low_karma_flag:
+                print(f"Updating count - '{self.bot_comment.id}'")
+                self.__count_replies()
+                self.update_count()
+                self.prev_update_time = time()
 
         # Check for self post approval
         if self.is_self_post and self.submission.approved:

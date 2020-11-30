@@ -274,7 +274,7 @@ class voting_session:
 
         # Check if post was deleted
         if self.submission.author is None:
-            print(f"Post removed - Closing session - '{self.bot_comment.id}'")
+            print(f"Post removed - Closing session - '{self.submission.id}'")
 
             # For self/low karma posts
             if self.is_self_post or self.low_karma_flag:
@@ -287,7 +287,7 @@ class voting_session:
 
         # Check if session time is up
         elif ((time() - self.session_start_time) / 60) > config["minutes"]:
-            print(f"Time is up - Closing session - '{self.bot_comment.id}'")
+            print(f"Time is up - Closing session - '{self.submission.id}'")
 
             # For self/low karma/removed posts
             if self.is_self_post or self.low_karma_flag or self.submission.removed:
@@ -303,7 +303,7 @@ class voting_session:
         # Check for update interval
         elif ((time() - self.prev_update_time) / 60) > config["update_interval"]:
             if not self.is_self_post and not self.low_karma_flag and not self.submission.removed:
-                print(f"Updating count - '{self.bot_comment.id}'")
+                print(f"Updating count - '{self.submission.id}'")
                 self.__count_replies()
                 self.update_count()
                 self.prev_update_time = time()

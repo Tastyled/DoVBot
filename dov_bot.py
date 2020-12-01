@@ -263,9 +263,9 @@ def comment_watch( subreddit ):
     while True:
         try:
             for comment in subreddit.stream.comments(skip_existing=True):
-                if comment is not None:
+                if comment is not None and comment.author.name != "DOVBOT":
 
-                    if in_blacklist(subreddit, comment.author) or comment.author.name == "DOVBOT":
+                    if in_blacklist(subreddit, comment.author):
                         comment.mod.remove(spam=False, mod_note="User in blacklist")
                         continue
 

@@ -8,7 +8,8 @@ import praw, prawcore
 import sqlite3
 import string
 from time import sleep
-import datetime
+from datetime import datetime
+import logging
 
 # Keys and Config
 from keys import keys
@@ -55,9 +56,25 @@ def in_whitelist( subreddit, redditor ):
 
     # Parse wiki for whitelist
     for line in whitelist.splitlines():
-        line = line.lower().rstrip()
+        line = line.lower().strip()
         if line == username:
             print("\tUser in whitelist")
+            return True
+    return False
+
+
+def in_blacklist( subreddit, redditor ):
+    username = redditor.name.lower()
+
+    # Get Wiki
+    wl_wiki = subreddit.wiki["blacklist"]
+    blacklist = (wl_wiki.content_md)
+
+    # Parse wiki for blacklist
+    for line in blacklist.splitlines():
+        line = line.lower().strip()
+        if line == username:
+            # print("\tUser in blacklist")
             return True
     return False
 
@@ -112,7 +129,7 @@ def good_account( redditor ):
 
     total_karma = redditor.comment_karma + redditor.link_karma
 
-    current_time = datetime.datetime.utcnow().timestamp()
+    current_time = datetime.utcnow().timestamp()
     account_age = current_time - redditor.created_utc
 
     account_age /= 2629800 # convert to months
@@ -246,7 +263,12 @@ def comment_watch( subreddit ):
     while True:
         try:
             for comment in subreddit.stream.comments(skip_existing=True):
-                if comment is not None and comment.author != "DOVBOT":
+                if comment is not None:
+
+                    if in_blacklist(subreddit, comment.author) or comment.author.name == "DOVBOT":
+                        comment.mod.remove(spam=False, mod_note="User in blacklist")
+                        continue
+
                     body = comment.body.lower()
 
                     # Check comment for vote word
@@ -287,8 +309,11 @@ def comment_watch( subreddit ):
                         message += "I've removed your comment for now. Just reply to me and after you fix it and a moderator will reapprove your comment. Thanks! :)"
 
                         comment.mod.remove(spam=False, mod_note="Spoiler tag applied incorrectly")
-                        reply = comment.reply(message)
-                        reply.mod.distinguish()
+                        try:
+                            reply = comment.reply(message)
+                            reply.mod.distinguish()
+                        except praw.exceptions.APIException:
+                            continue
 
         except( prawcore.exceptions.ServerError,
                 prawcore.exceptions.RequestException,

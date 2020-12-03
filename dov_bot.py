@@ -352,7 +352,7 @@ def inbox_watch():
                             send_message("r/deadorvegetable",
                             "Feedback Received",
                             f"user: /u/{m.author}\n\n" +
-                            f"body: \"{m.body}\"" )
+                            f"\"{m.body}\"" )
                     send_message("Tastyled",
                         f"Message received from user: /u/{m.author}",
                         f"/u/{m.author}  \n" +

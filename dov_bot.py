@@ -351,9 +351,8 @@ def inbox_watch():
                         else:
                             send_message("r/deadorvegetable",
                             "Feedback Received",
-                            f"/u/{m.author}  \n" +
-                            f"Subject: {m.subject}\n\n" +
-                            f"{m.body}" )
+                            f"user: /u/{m.author}\n\n" +
+                            f"body: \"{m.body}\"" )
                     send_message("Tastyled",
                         f"Message received from user: /u/{m.author}",
                         f"/u/{m.author}  \n" +

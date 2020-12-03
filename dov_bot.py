@@ -340,6 +340,18 @@ def inbox_watch():
                         dov_comment = reddit.comment(comment.parent_id.replace("t1_",''))
                         dov_comment.report("Please check if spoiler tag is applied correctly.")
 
+                    if m.subject == "Feedback":
+                        body = m.body.lower()
+                        body = body.translate(str.maketrans('', '', string.punctuation))
+                        body = body.split()
+                        if len(body) == 1 and any(word in body for word in vote_words): # Check if message is one word vote reply
+                            m.reply("Reply to the bot comment. This message box is for feedback about the sub only.\n\nRepeated attempts to use this box to vote will result in a ban.")
+                        else:
+                            send_message("r/deadorvegetable",
+                            "Feedback Received",
+                            f"/u/{m.author}  \n" +
+                            f"Subject: {m.subject}\n\n" +
+                            f"{m.body}" )
                     send_message("Tastyled",
                         f"Message received from user: /u/{m.author}",
                         f"/u/{m.author}  \n" +

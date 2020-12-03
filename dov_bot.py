@@ -330,6 +330,8 @@ def inbox_watch():
     # Inbox Checking Thread
     print("Starting Inbox Check Thread")
 
+    vote_words = config['dead_words'] + config['vegg_words'] + config['none_words']
+
     while True:
         try:
             for m in reddit.inbox.unread():

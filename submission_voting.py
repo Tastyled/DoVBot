@@ -276,6 +276,7 @@ class voting_session:
                 self.bot_comment.mod.distinguish(sticky=True)
         except IndexError:
             print(f"Index Error for session {self.submission.id}")
+            print(f"Bot comment {self.bot_comment.id}")
             raise
 
         # Check if post was deleted

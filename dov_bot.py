@@ -298,15 +298,16 @@ def comment_watch( subreddit ):
                             line_break = True
 
                     if bad_starter or line_break:
-                        message = "Uh oh, you didn't apply the spoiler tag correctly :(\n\n"
-                        if bad_starter:
-                            message += "Make sure to not leave any spaces between `>!` and `!<`. `>!It should look like this.!<`\n\n"
-                        if bad_starter and line_break:
-                            message += "ALSO\n\n"
-                        if line_break:
-                            message += "You can't have more than one line break between the spoiler tags.  \n>!See, \n\nthis doesn't work.!<\n\n"
+                        message = "Uh oh, you didn't apply the spoiler tag correctly :(\n\n" + \
+                        "Please check out our page on [how to format spoiler tags correctly](https://reddit.com/r/deadorvegetable/wiki/spoilers).\n\n" + \
+                        # if bad_starter:
+                        #     message += "Make sure to not leave any spaces between `>!` and `!<`. `>!It should look like this.!<`\n\n"
+                        # if bad_starter and line_break:
+                        #     message += "ALSO\n\n"
+                        # if line_break:
+                        #     message += "You can't have more than one line break between the spoiler tags.  \n>!See, \n\nthis doesn't work.!<\n\n"
 
-                        message += "I've removed your comment for now. Just reply to me and after you fix it and a moderator will reapprove your comment. Thanks! :)"
+                        "I've removed your comment for now. Just reply to me and after you fix it and a moderator will reapprove your comment. Thanks! :)"
 
                         comment.mod.remove(spam=False, mod_note="Spoiler tag applied incorrectly")
                         try:

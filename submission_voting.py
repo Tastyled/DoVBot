@@ -271,8 +271,12 @@ class voting_session:
             #     self.submission.mod.spoiler()
 
         # Re-sticky if a comment is not stickied already
-        if not self.submission.comments[0].stickied:
-            self.bot_comment.mod.distinguish(sticky=True)
+        try:
+            if not self.submission.comments[0].stickied:
+                self.bot_comment.mod.distinguish(sticky=True)
+        except IndexError:
+            print(f"Index Error for session {self.submission.id}")
+            raise
 
         # Check if post was deleted
         if self.submission.author is None:

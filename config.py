@@ -38,7 +38,7 @@ config = dict(
                               "[Message the Mods](https://www.reddit.com/message/compose?to=" +
                               "%%2Fr%%2F%s&subject=" +
                               urlify("Please Approve my Text Post") + "&message=" +
-                              urlify("Hello mod team!\n\nI have not read the rules so I did not get permission to post a text-post before actually doing so. Could you pleeaase approve my post so that I may give my two cents about the community?\n\nThank you!\n\nSincerely,  \n") +
+                              urlify("Hello mod team!\n\nI have not read the rules so I did not get permission to post a text-post before actually doing so. Could you pleeaase approve my post?\n\nThank you!\n\nSincerely,  \n") +
                               "%s" +
                               urlify("\n\nTitle: \"") +
                               "%s" +

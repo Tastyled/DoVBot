@@ -309,6 +309,7 @@ class voting_session:
         elif ((time() - self.prev_update_time) / 60) > config["update_interval"]:
             if not self.is_self_post and not self.low_karma_flag and not self.submission.removed:
                 print(f"Updating count - '{self.submission.id}'")
+                self.__reset_votes()
                 self.__count_replies()
                 self.update_count()
                 self.prev_update_time = time()

@@ -49,7 +49,7 @@ class voting_session:
         else:
             raise ValueError("voting_session - __init__() - Bot comment or session start time received without counterpart")
 
-        self.prev_update_time = self.session_start_time
+        self.prev_update_time = self.bot_comment.edited if self.bot_comment.edited else self.session_start_time
 
     def __reset_session(self):
         self.low_karma_flag = False
@@ -274,7 +274,7 @@ class voting_session:
             # Unsticky bot comment if it has been removed
             if self.bot_comment.removed:
                 self.bot_comment.mod.distinguish(how="no", sticky=False)
-                
+
             # Re-sticky if a comment is not stickied already
             elif not self.submission.comments[0].stickied:
                 self.bot_comment.mod.distinguish(sticky=True)

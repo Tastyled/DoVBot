@@ -14,7 +14,7 @@ config = dict(
     welcome_comment_text    = "***\nDead or Vegetable? Reply to **this comment** with your opinion." +
                               "\n\nPost is shite? **Downvote this comment**." +
                               "\n\nAs always, please remember to mark news articles and other general spoilers with a spoiler tag.  \n" +
-                              f"[Here are the instructions to do so]({spoiler_wiki_url})\n",
+                              f"[Spoiler Tag Instructions]({spoiler_wiki_url})\n",
 
     # Welcome/Closed comment footer
     comment_footer          = f"***\n[^(How Voting Works)]({wiki_url}) ^(-) [^(Latest Mod Update)]({mod_message_url}) ^(-) [^(Send Feedback)]({feedback_url})",

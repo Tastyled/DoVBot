@@ -8,7 +8,8 @@ import praw, prawcore
 import sqlite3
 import string
 from time import sleep
-import datetime
+from datetime import datetime
+import logging
 
 # Keys and Config
 from keys import keys
@@ -55,9 +56,25 @@ def in_whitelist( subreddit, redditor ):
 
     # Parse wiki for whitelist
     for line in whitelist.splitlines():
-        line = line.lower().rstrip()
+        line = line.lower().strip()
         if line == username:
             print("\tUser in whitelist")
+            return True
+    return False
+
+
+def in_blacklist( subreddit, redditor ):
+    username = redditor.name.lower()
+
+    # Get Wiki
+    wl_wiki = subreddit.wiki["blacklist"]
+    blacklist = (wl_wiki.content_md)
+
+    # Parse wiki for blacklist
+    for line in blacklist.splitlines():
+        line = line.lower().strip()
+        if line == username:
+            # print("\tUser in blacklist")
             return True
     return False
 
@@ -107,9 +124,12 @@ def karma_needed(age):
 
 def good_account( redditor ):
 
+    if redditor.comment_karma < config["min_comment_karma"] or redditor.link_karma < config["min_link_karma"]:
+        return False
+
     total_karma = redditor.comment_karma + redditor.link_karma
 
-    current_time = datetime.datetime.utcnow().timestamp()
+    current_time = datetime.utcnow().timestamp()
     account_age = current_time - redditor.created_utc
 
     account_age /= 2629800 # convert to months
@@ -168,6 +188,9 @@ def submission_watch( subreddit ):
                 prawcore.exceptions.RequestException,
                 prawcore.exceptions.ResponseException ) as e:
             failure_wait_retry(e, "submissions")
+        except Exception as e:
+            send_message("Tastyled", "Exception thrown", f"Exception thrown in submissions:\n\n{e}")
+            raise
 
 
     raise ValueError("SUBMISSION THREAD EXITING")
@@ -225,6 +248,9 @@ def session_watch():
                 prawcore.exceptions.RequestException,
                 prawcore.exceptions.ResponseException ) as e:
             failure_wait_retry(e, "sessions")
+        except Exception as e:
+            send_message("Tastyled", "Exception thrown", f"Exception thrown in sessions:\n\n{e}")
+            raise
 
     raise ValueError("SESSION THREAD EXITING")
 
@@ -237,24 +263,59 @@ def comment_watch( subreddit ):
     while True:
         try:
             for comment in subreddit.stream.comments(skip_existing=True):
-                if comment is not None:
+                if comment is not None and comment.author.name != "DOVBOT":
+
+                    if in_blacklist(subreddit, comment.author):
+                        comment.mod.remove(spam=False, mod_note="User in blacklist")
+                        continue
+
                     body = comment.body.lower()
-                    body = body.translate(str.maketrans('', '', string.punctuation))
-                    body = body.split()
 
                     # Check comment for vote word
                     if comment.parent_id == comment.link_id:                            # Check only top level comments
-                        if len(body) == 1 and any(word in body for word in vote_words): # Check if comment is one word vote reply
+                        body_check = body.translate(str.maketrans('', '', string.punctuation))
+                        body_check = body_check.split()
+                        if len(body_check) == 1 and any(word in body_check for word in vote_words): # Check if comment is one word vote reply
 
                             print("Removing spam comment")
                             comment.mod.remove(spam=False, mod_note="Voting outside of voting thread")
 
                             print("Done")
+                    else:                                                               # Not a top level comment
+                        parent = reddit.comment(comment.parent_id.replace("t1_",''))
+                        if parent.author == "DOVBOT" and parent.parent_id == comment.link_id: # Check if reply to DOVBOT vote thread
+                            comment.mod.remove(spam=False, mod_note="Vote anonymized")
+                            print("Removed vote")
+                            continue
+
+                    bad_starter = False
+                    line_break = False
+                    body_check = body.split("\n\n")
+                    for line in body_check:
+                        if ">! " in line:
+                            bad_starter = True
+                        if ">!" in line and "!<" not in line:
+                            line_break = True
+
+                    if bad_starter or line_break:
+                        message = "Uh oh, you didn't apply the spoiler tag correctly :(\n\n" + \
+                        "Please check out our page on [how to format spoiler tags correctly](https://reddit.com/r/deadorvegetable/wiki/spoilers).\n\n" + \
+                        "I've removed your comment for now. Just reply to me and after you fix it and a moderator will reapprove your comment. Thanks! :)"
+
+                        comment.mod.remove(spam=False, mod_note="Spoiler tag applied incorrectly")
+                        try:
+                            reply = comment.reply(message)
+                            reply.mod.distinguish()
+                        except praw.exceptions.APIException:
+                            continue
 
         except( prawcore.exceptions.ServerError,
                 prawcore.exceptions.RequestException,
                 prawcore.exceptions.ResponseException ) as e:
             failure_wait_retry(e, "comments")
+        except Exception as e:
+            send_message("Tastyled", "Exception thrown", f"Exception thrown in comments:\n\n{e}")
+            raise
 
     raise ValueError("COMMENT THREAD EXITING")
 
@@ -263,11 +324,36 @@ def inbox_watch():
     # Inbox Checking Thread
     print("Starting Inbox Check Thread")
 
+    vote_words = config['dead_words'] + config['vegg_words'] + config['none_words']
+
     while True:
         try:
             for m in reddit.inbox.unread():
                 if m is not None:
                     print("Message Received - Forwarding")
+                    if m.was_comment:
+                        comment = reddit.comment(m.id)
+                        dov_comment = reddit.comment(comment.parent_id.replace("t1_",''))
+                        try:
+                            orig_comment = reddit.comment(dov_comment.parent_id.replace("t1_",''))
+                            if orig_comment.author.name == comment.author.name:
+                                dov_comment.report("Please check if spoiler tag is applied correctly.")
+                        except praw.exceptions.APIException as e:
+                            if "DELETED_COMMENT" in str(e):
+                                pass
+                            else:
+                                raise
+                    if m.subject == "Feedback":
+                        body = m.body.lower()
+                        body = body.translate(str.maketrans('', '', string.punctuation))
+                        body = body.split()
+                        if len(body) == 1 and any(word in body for word in vote_words): # Check if message is one word vote reply
+                            m.reply("Reply to the bot comment. This message box is for feedback about the sub only.\n\nRepeated attempts to use this box to vote will result in a ban.")
+                        else:
+                            send_message("r/deadorvegetable",
+                            "Feedback Received",
+                            f"user: /u/{m.author}\n\n" +
+                            f"\"{m.body}\"" )
                     send_message("Tastyled",
                         f"Message received from user: /u/{m.author}",
                         f"/u/{m.author}  \n" +
@@ -279,6 +365,9 @@ def inbox_watch():
                 prawcore.exceptions.RequestException,
                 prawcore.exceptions.ResponseException ) as e:
             failure_wait_retry(e, "inbox")
+        except Exception as e:
+            send_message("Tastyled", "Exception thrown", f"Exception thrown in inbox:\n\n{e}")
+            raise
 
     raise ValueError("INBOX THREAD EXITING")
 
@@ -306,6 +395,9 @@ def queue_watch( subreddit ):
                 prawcore.exceptions.RequestException,
                 prawcore.exceptions.ResponseException ) as e:
             failure_wait_retry(e, "queue")
+        except Exception as e:
+            send_message("Tastyled", "Exception thrown", f"Exception thrown in queue:\n\n{e}")
+            raise
 
     raise ValueError("QUEUE THREAD EXITING")
 

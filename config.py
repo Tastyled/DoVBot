@@ -1,7 +1,7 @@
 from helpers import urlify
 
 wiki_url                = "https://www.reddit.com/r/DeadorVegetable/wiki/dovbot/"
-mod_message_url         = "https://www.reddit.com/r/DeadorVegetable/comments/jidohi/dovs_tastiest_vegetable_competition/"
+mod_message_url         = "https://www.reddit.com/k0fswo/"
 
 config = dict(
     # Subreddit to monitor
@@ -10,9 +10,12 @@ config = dict(
 
     # Welcome text the bot should comment
     welcome_comment_text    = "***\nDead or Vegetable? Reply to **this comment** with your opinion." +
-                              "\n\nPlease remember to mark news articles and other general spoilers with a spoiler tag >!\>!like this!\<!<\n***\n" +
-                            #   "Good post? **Upvote** this comment. Bad post? **Downvote**.\n***\n" +
-                              f"^(For more info:) [^(How Voting Works)]({wiki_url}) ^(-) [^(Latest Mod Update)]({mod_message_url})",
+                              "\n\nWe are trying something new. All votes cast will be hidden in order to make voting anonymous. If you have any feedback or suggestions, " +
+                              "[let us know](https://www.reddit.com/message/compose?to=DOVBOT&subject=Feedback)." +
+                              "\n\nAs always, please remember to mark news articles and other general spoilers with a spoiler tag \>!like this!\<\n",
+
+    # Welcome/Closed comment footer
+    comment_footer          = f"***\n^(For more info:) [^(How Voting Works)]({wiki_url}) ^(-) [^(Latest Mod Update)]({mod_message_url})",
 
     # Welcome text if account is too new or has too little karma
     low_karma_comment       = "Thank you for your submission to r/DeadorVegetable!\n\n" +
@@ -20,12 +23,13 @@ config = dict(
                               "Thanks!",
 
     # Comment after the voting period has ended
-    edit_comment_text       = "Voting period has closed. Subject has been deemed: **%s**\n***\n" +
-                              "#####Votes\n" +
+    closed_comment_header   = "Voting period has closed. Subject has been deemed: **%s**\n***\n",
+
+    # Layout of the votes histogram
+    histogram_layout        = "#####Votes\n" +
                               "| Dead | Veggie | Neither |\n" +
-                              "| --- | --- | --- |\n"
-                              "| %d | %d | %d |\n***\n" +
-                              f"^(For more info:) [^(How Voting Works)]({wiki_url}) ^(-) [^(Latest Mod Update)]({mod_message_url})",
+                              "| --- | --- | --- |\n" +
+                              "| %d | %d | %d |\n",
 
     # Comment posted to a self-post
     self_comment_text       = "Thank you for your submission to r/DeadorVegetable!\n\n" +
@@ -34,7 +38,7 @@ config = dict(
                               "[Message the Mods](https://www.reddit.com/message/compose?to=" +
                               "%%2Fr%%2F%s&subject=" +
                               urlify("Please Approve my Text Post") + "&message=" +
-                              urlify("Hello mod team!\n\nI have not read the rules so I did not get permission to post a text-post before actually doing so. Could you pleeaase approve my post so that I may give my two cents about the community?\n\nThank you!\n\nSincerely,  \n") +
+                              urlify("Hello mod team!\n\nI have not read the rules so I did not get permission to post a text-post before actually doing so. Could you pleeaase approve my post?\n\nThank you!\n\nSincerely,  \n") +
                               "%s" +
                               urlify("\n\nTitle: \"") +
                               "%s" +
@@ -49,6 +53,7 @@ config = dict(
 
     # Duration of voting period in minutes
     minutes                 = 1440,
+    update_interval         = 30,
 
     # Words used for voting
     dead_words              = ["dead", "ded", "rip", "dwad"],
@@ -60,4 +65,6 @@ config = dict(
     min_karma_2             = 500,    # scalar karma value 2
     min_age_1               = 1,      # scalar age value 1 in months
     min_age_2               = 6,      # scalar age value 2 in months
+    min_comment_karma       = 10,     # minimum comment karma
+    min_link_karma          = 1       # minimum post karma
 )

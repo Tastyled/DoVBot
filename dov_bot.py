@@ -17,6 +17,12 @@ from config import config
 # Submission Vote
 from submission_voting import voting_session
 
+logger = logging.getLogger("main")
+logger.setLevel(logging.INFO)
+
+formatter = logging.Formatter("%(asctime)s %(name)s %(levelname)s : %(message)s")
+
+logging.basicConfig(filename=f"logs/{datetime.now().strftime('%m-%d-%Y_%H:%M:%S')}.log", format="%(asctime)s %(levelname)s : %(message)s", datefmt="%m/%d/%Y %H:%M:%S")
 
 # Reddit API Connection
 reddit = praw.Reddit(client_id=keys['client_id'],
@@ -24,7 +30,7 @@ reddit = praw.Reddit(client_id=keys['client_id'],
                      user_agent=keys['user_agent'],
                      username=keys['username'],
                      password=keys['password'])
-print("Logged in")
+logging.info("Logged in")
 
 # Arrays for storing submissions and open voting sessions
 synced_posts = []
@@ -41,8 +47,7 @@ def get_db():
         sql_cursor.execute(
             "ALTER TABLE 'submissions' ADD COLUMN low_karma INT")
     except sqlite3.Error as err:
-        # print(f"{err} - ignoring")
-        pass
+        logging.warning(f"{err}")
     return sql_config, sql_cursor
 
 
@@ -63,7 +68,7 @@ def in_whitelist( subreddit, redditor ):
 
 
 def failure_wait_retry(error, threadname):
-    print(f"\n\n{error}")
+    logging.warning(f"\n\n{error}")
     print(f"{threadname} waiting 30 seconds for retry")
     sleep(30)
     print(f"Restarting {threadname} Thread")
@@ -126,7 +131,7 @@ def good_account( redditor ):
 def submission_watch( subreddit ):
     # Submission waiting thread
     sql_config, sql_cursor = get_db()
-    print("Starting Submission Thread")
+    logging.info("Starting Submission Thread")
 
     while True:
         try:
@@ -176,7 +181,7 @@ def submission_watch( subreddit ):
 def session_watch():
     # Voting session waiting thread
     sql_config, sql_cursor = get_db()
-    print("Starting Voting Session Thread")
+    logging.info("Starting Voting Session Thread")
 
     while True:
         try:
@@ -231,7 +236,7 @@ def session_watch():
 
 def comment_watch( subreddit ):
     # Comment Watch Thread
-    print("Starting Comment Checking Thread")
+    logging.info("Starting Comment Checking Thread")
     vote_words = config['dead_words'] + config['vegg_words'] + config['none_words']
 
     while True:
@@ -261,7 +266,7 @@ def comment_watch( subreddit ):
 
 def inbox_watch():
     # Inbox Checking Thread
-    print("Starting Inbox Check Thread")
+    logging.info("Starting Inbox Check Thread")
 
     while True:
         try:
@@ -284,7 +289,7 @@ def inbox_watch():
 
 def queue_watch( subreddit ):
     # Mod Queue Checking Thread
-    print("Starting Queue Check Thread")
+    logging.info("Starting Queue Check Thread")
 
     while True:
         try:
@@ -318,7 +323,7 @@ def main():
 
     subreddit = reddit.subreddit(config['subreddit'])
 
-    print("Ready.")
+    logging.info("Ready.")
 
     try:
         submission_thread   = threading.Thread(target=submission_watch, args=(subreddit,))
@@ -335,9 +340,9 @@ def main():
 
         submission_thread.start()
         session_thread.start()
-        comment_thread.start()
-        inbox_thread.start()
-        queue_thread.start()
+        # comment_thread.start()
+        # inbox_thread.start()
+        # queue_thread.start()
 
         while True: sleep(100)
 

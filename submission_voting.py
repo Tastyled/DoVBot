@@ -286,6 +286,7 @@ class voting_session:
             self.submission.subreddit.message("Removal Threshold Met",
                 f"Bot comment score: {self.bot_comment.score}\n \
                 Link: 'https://www.reddit.com/{self.submission.id}'" )
+                
         elif self.bot_comment.score <= config["downvote_report_thresh"]:
             self.submission.report(f"Downvote threshold met - score is {self.bot_comment.score}")
 

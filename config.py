@@ -17,7 +17,7 @@ config = dict(
                               f"[Here are the instructions to do so]({spoiler_wiki_url})\n",
 
     # Welcome/Closed comment footer
-    comment_footer          = f"***\n[^(How Voting Works)]({wiki_url}) ^(-) [^(Latest Mod Update)]({mod_message_url}) [^(let us know)]({feedback_url})",
+    comment_footer          = f"***\n[^(How Voting Works)]({wiki_url}) ^(-) [^(Latest Mod Update)]({mod_message_url}) ^(-) [^(Send Feedback)]({feedback_url})",
 
     # Welcome text if account is too new or has too little karma
     low_karma_comment       = "Thank you for your submission to r/DeadorVegetable!\n\n" +
@@ -58,8 +58,8 @@ config = dict(
     update_interval         = 30,
 
     # Automatic Removal Commment Score Threshold
-    downvote_removal_thresh = 100,
-    downvote_report_thresh  = 10,
+    downvote_removal_thresh = -100,
+    downvote_report_thresh  = -10,
 
     # Words used for voting
     dead_words              = ["dead", "ded", "rip", "dwad"],

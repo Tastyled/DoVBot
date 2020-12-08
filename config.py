@@ -11,10 +11,11 @@ config = dict(
     subreddit               = "DeadorVegetable",
 
     # Welcome text the bot should comment
-    welcome_comment_text    = "***\nDead or Vegetable? Reply to **this comment** with your opinion." +
-                              "\n\nPost is shite? **Downvote this comment**." +
-                              "\n\nAs always, please remember to mark news articles and other general spoilers with a spoiler tag.  \n" +
-                              f"[Spoiler Tag Instructions]({spoiler_wiki_url})\n",
+    welcome_comment_text    = "***\nDead or Vegetable?\n\n " \
+                              " * **Reply** to this comment with your opinion.\n" +
+                              " * **Upvote** this comment if the post is good.\n" +
+                              " * **Downvote** this comment if the post is trash.\n" +
+                             f"\nPlease remember to mark news articles and other general spoilers with a [spoiler tag]({spoiler_wiki_url}).\n",
 
     # Welcome/Closed comment footer
     comment_footer          = f"***\n[^(How Voting Works)]({wiki_url}) ^(-) [^(Latest Mod Update)]({mod_message_url}) ^(-) [^(Send Feedback)]({feedback_url})",

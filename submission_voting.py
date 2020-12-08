@@ -270,16 +270,17 @@ class voting_session:
             # if not self.submission.spoiler:
             #     self.submission.mod.spoiler()
 
-        # Re-sticky if a comment is not stickied already
         try:
-            if not self.submission.comments[0].stickied:
+            # Unsticky bot comment if it has been removed
+            if self.bot_comment.removed:
+                self.bot_comment.mod.distinguish(how="no", sticky=False)
+                
+            # Re-sticky if a comment is not stickied already
+            elif not self.submission.comments[0].stickied:
                 self.bot_comment.mod.distinguish(sticky=True)
         except IndexError:
             pass
 
-        # Unsticky bot comment if it has been removed
-        if self.bot_comment.removed:
-            self.bot_comment.mod.distinguish(how="no", sticky=False)
 
         # Check if post was deleted
         if self.submission.author is None:

@@ -277,6 +277,10 @@ class voting_session:
         except IndexError:
             pass
 
+        # Unsticky bot comment if it has been removed
+        if self.bot_comment.removed:
+            self.bot_comment.distinguish(how="no", sticky=False)
+
         # Check if post was deleted
         if self.submission.author is None:
             print(f"Post removed - Closing session - '{self.submission.id}'")

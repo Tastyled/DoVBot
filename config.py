@@ -13,7 +13,7 @@ config = dict(
     # Welcome text the bot should comment
     welcome_comment_text    = "***\nDead or Vegetable? Reply to **this comment** with your opinion." +
                               "\n\nPost is shite? **Downvote this comment**." +
-                              "\n\nAs always, please remember to mark news articles and other general spoilers with a spoiler tag  \n" +
+                              "\n\nAs always, please remember to mark news articles and other general spoilers with a spoiler tag.  \n" +
                               f"[Here are the instructions to do so]({spoiler_wiki_url})\n",
 
     # Welcome/Closed comment footer

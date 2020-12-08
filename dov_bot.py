@@ -382,7 +382,7 @@ def queue_watch( subreddit ):
                 for report in reported_item.user_reports:
                     total_reports += report[1]
 
-                if not reported_item.approved and total_reports >= config["report_thresh"]:
+                if not reported_item.approved and total_reports >= config["report_removal_thresh"]:
                     print("Report threshold met - removing post")
                     reported_item.mod.remove(spam=False, mod_note="Report Threshold Met - Need moderator approval")
                     Message = config['automod_mail_message'] % (total_reports, reported_item.title, reported_item.author, reported_item.id)

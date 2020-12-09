@@ -2,6 +2,8 @@ from helpers import urlify
 
 wiki_url                = "https://www.reddit.com/r/DeadorVegetable/wiki/dovbot/"
 mod_message_url         = "https://www.reddit.com/k0fswo/"
+spoiler_wiki_url        = "https://www.reddit.com/r/DeadorVegetable/wiki/spoilers/"
+feedback_url            = "https://www.reddit.com/message/compose?to=DOVBOT&subject=Feedback"
 
 config = dict(
     # Subreddit to monitor
@@ -9,13 +11,14 @@ config = dict(
     subreddit               = "DeadorVegetable",
 
     # Welcome text the bot should comment
-    welcome_comment_text    = "***\nDead or Vegetable? Reply to **this comment** with your opinion." +
-                              "\n\nWe are trying something new. All votes cast will be hidden in order to make voting anonymous. If you have any feedback or suggestions, " +
-                              "[let us know](https://www.reddit.com/message/compose?to=DOVBOT&subject=Feedback)." +
-                              "\n\nAs always, please remember to mark news articles and other general spoilers with a spoiler tag \>!like this!\<\n",
+    welcome_comment_text    = "***\nDead or Vegetable?\n\n" \
+                              " * **Reply** to this comment with your opinion.\n" +
+                              " * **Upvote** this comment if the post is good.\n" +
+                              " * **Downvote** this comment if the post is trash.\n" +
+                             f"\nPlease remember to mark news articles and other general spoilers with a [spoiler tag]({spoiler_wiki_url}).\n",
 
     # Welcome/Closed comment footer
-    comment_footer          = f"***\n^(For more info:) [^(How Voting Works)]({wiki_url}) ^(-) [^(Latest Mod Update)]({mod_message_url})",
+    comment_footer          = f"***\n[^(How Voting Works)]({wiki_url}) ^(-) [^(Latest Mod Update)]({mod_message_url}) ^(-) [^(Send Feedback)]({feedback_url})",
 
     # Welcome text if account is too new or has too little karma
     low_karma_comment       = "Thank you for your submission to r/DeadorVegetable!\n\n" +
@@ -46,7 +49,7 @@ config = dict(
                               "%s) ",
 
     # Automatic Removal Report Threshold
-    report_thresh           = 7,
+    report_removal_thresh   = 7,
 
     # Message to modmail when Report Threshold is met
     automod_mail_message    = "Hello fellow moderators,\n\nI have removed a post for you. It currently has %d reports. Please take a look to see if I did good.\n\nTitle: '%s'  \nUser: /u/%s  \nLink: www.reddit.com/%s",
@@ -54,6 +57,10 @@ config = dict(
     # Duration of voting period in minutes
     minutes                 = 1440,
     update_interval         = 30,
+
+    # Automatic Removal Commment Score Threshold
+    downvote_removal_thresh = -100,
+    downvote_report_thresh  = -10,
 
     # Words used for voting
     dead_words              = ["dead", "ded", "rip", "dwad"],

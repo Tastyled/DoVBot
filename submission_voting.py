@@ -254,7 +254,7 @@ class voting_session:
 
     def update_count(self):
         edit_comment = config["welcome_comment_text"] + \
-            "\n***\nHere's how the score is looking currently:\n\n" + \
+            "\n&nbsp;\n***\nHere's how the score is looking currently:\n\n" + \
             config["histogram_layout"] % (self.dead_score, self.vegg_score, self.none_score) + \
             config["comment_footer"]
         self.bot_comment.edit( edit_comment )
@@ -281,6 +281,14 @@ class voting_session:
         except IndexError:
             pass
 
+        if self.bot_comment.score <= config["downvote_removal_thresh"] and not self.submission.approved:
+            self.submission.mod.remove(spam=False, mod_note="Removal Threshold Met")
+            self.submission.subreddit.message("Removal Threshold Met",
+                f"Bot comment score: {self.bot_comment.score}\n \
+                Link: 'https://www.reddit.com/{self.submission.id}'" )
+
+        elif self.bot_comment.score <= config["downvote_report_thresh"]:
+            self.submission.report(f"Downvote threshold met - score is {self.bot_comment.score}")
 
         # Check if post was deleted
         if self.submission.author is None:

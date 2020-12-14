@@ -1,7 +1,7 @@
 from helpers import urlify
 
 wiki_url                = "https://www.reddit.com/r/DeadorVegetable/wiki/dovbot/"
-mod_message_url         = "https://www.reddit.com/k0fswo/"
+mod_message_url         = "https://www.reddit.com/kd5ed5/"
 spoiler_wiki_url        = "https://www.reddit.com/r/DeadorVegetable/wiki/spoilers/"
 feedback_url            = "https://www.reddit.com/message/compose?to=DOVBOT&subject=Feedback"
 
@@ -18,7 +18,7 @@ config = dict(
                              f"\nPlease remember to mark news articles and other general spoilers with a [spoiler tag]({spoiler_wiki_url}).\n",
 
     # Welcome/Closed comment footer
-    comment_footer          = f"***\n[^(How Voting Works)]({wiki_url}) ^(-) [^(Latest Mod Update)]({mod_message_url}) ^(-) [^(Send Feedback)]({feedback_url})",
+    comment_footer          = f"***\n[^(How to Vote)]({wiki_url}) ^(-) [^(Latest Mod Update)]({mod_message_url}) ^(-) [^(Send Feedback)]({feedback_url})",
 
     # Welcome text if account is too new or has too little karma
     low_karma_comment       = "Thank you for your submission to r/DeadorVegetable!\n\n" +

@@ -334,15 +334,9 @@ def inbox_watch():
                     if m.was_comment:
                         comment = reddit.comment(m.id)
                         dov_comment = reddit.comment(comment.parent_id.replace("t1_",''))
-                        try:
-                            orig_comment = reddit.comment(dov_comment.parent_id.replace("t1_",''))
-                            if orig_comment.author.name == comment.author.name:
-                                dov_comment.report("Please check if spoiler tag is applied correctly.")
-                        except praw.exceptions.APIException as e:
-                            if "DELETED_COMMENT" in str(e):
-                                pass
-                            else:
-                                raise
+                        orig_comment = reddit.comment(dov_comment.parent_id.replace("t1_",''))
+                        if orig_comment and orig_comment.author.name == comment.author.name:
+                            dov_comment.report("Please check if spoiler tag is applied correctly.")
                     if m.subject == "Feedback":
                         body = m.body.lower()
                         body = body.translate(str.maketrans('', '', string.punctuation))

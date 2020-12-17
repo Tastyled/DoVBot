@@ -11,7 +11,8 @@ config = dict(
     subreddit               = "DeadorVegetable",
 
     # Welcome text the bot should comment
-    welcome_comment_text    = "***\nDead or Vegetable?\n\n" \
+    welcome_comment_text    = f"###ATTENTION EVERYBODY ON DEADORVEGETABLE\nBefore discussing the scary polls and answering them inaccurately, **[read our announcement post]({mod_message_url}).**  \nBy lying on these polls you are likely doing much more harm than good. Answer them truthfully.\n"
+                              "***\nDead or Vegetable?\n\n" +
                               " * **Reply** to this comment with your opinion.\n" +
                               " * **Upvote** this comment if the post is good.\n" +
                               " * **Downvote** this comment if the post is trash.\n" +

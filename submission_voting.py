@@ -173,7 +173,7 @@ class voting_session:
         for reply in self.bot_comment.replies:
             if isinstance(reply, MoreComments):
                 continue
-            if not reply.removed: reply.mod.remove()
+            if not reply.removed: reply.mod.remove(spam=False, mod_note="Vote anonymized")
             self.__parse_tally(reply)
         print(f"\tReplies - D: {self.dead_score} - V: {self.vegg_score} - N: {self.none_score}")
 

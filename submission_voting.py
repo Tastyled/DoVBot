@@ -304,7 +304,7 @@ class voting_session:
                 self.__close_voting_period(removed=True)
 
         # Check if session time is up
-        elif ((time() - self.session_start_time) / 60) > config["minutes"]:
+        elif ((time() - self.bot_comment.created_utc) / 60) > config["minutes"]:
             print(f"Time is up - Closing session - '{self.submission.id}'")
 
             # For self/low karma/removed posts

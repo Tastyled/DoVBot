@@ -333,6 +333,7 @@ def inbox_watch():
                     print("Message Received - Forwarding")
                     if m.was_comment:
                         comment = reddit.comment(m.id)
+                        remove          = True
                         parent          = None
                         orig_comment    = None
 
@@ -341,9 +342,13 @@ def inbox_watch():
 
                             if parent.author.name == "DOVBOT" and "t1_" in parent.parent_id:
                                 orig_comment = reddit.comment(parent.parent_id.replace("t1_",''))
+                                remove = False
 
                                 if orig_comment.author.name == comment.author.name:
                                     parent.report("Please check if spoiler tag is applied correctly.")
+
+                        if remove:
+                            comment.mod.remove(spam=False, mod_note="Don't @ me.")
 
                     elif m.subject == "Feedback":
                         body = m.body.lower()

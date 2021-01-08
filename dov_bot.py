@@ -333,11 +333,19 @@ def inbox_watch():
                     print("Message Received - Forwarding")
                     if m.was_comment:
                         comment = reddit.comment(m.id)
-                        dov_comment = reddit.comment(comment.parent_id.replace("t1_",''))
-                        orig_comment = reddit.comment(dov_comment.parent_id.replace("t1_",''))
-                        if orig_comment and orig_comment.author.name == comment.author.name:
-                            dov_comment.report("Please check if spoiler tag is applied correctly.")
-                    if m.subject == "Feedback":
+                        parent          = None
+                        orig_comment    = None
+
+                        if "t1_" in comment.parent_id:
+                            parent = reddit.comment(comment.parent_id.replace("t1_",''))
+
+                            if parent.author.name == "DOVBOT" and "t1_" in parent.parent_id:
+                                orig_comment = reddit.comment(parent.parent_id.replace("t1_",''))
+
+                                if orig_comment.author.name == comment.author.name:
+                                    parent.report("Please check if spoiler tag is applied correctly.")
+
+                    elif m.subject == "Feedback":
                         body = m.body.lower()
                         body = body.translate(str.maketrans('', '', string.punctuation))
                         body = body.split()

@@ -299,7 +299,8 @@ def comment_watch( subreddit ):
 
                     if bad_starter or line_break:
                         message = "Uh oh, you didn't apply the spoiler tag correctly :(\n\n" + \
-                        "Please check out our page on [how to format spoiler tags correctly](https://reddit.com/r/deadorvegetable/wiki/spoilers).\n\n" + \
+                        "Please check out our page on [how to format spoiler tags correctly](https://reddit.com/r/deadorvegetable/wiki/spoilers).\n  " + \
+                        "Even if the spoiler tag shows up on your screen, it does not appear on others. Read the wiki to figure out why.\n\n" + \
                         "I've removed your comment for now. Just reply to me and after you fix it and a moderator will reapprove your comment. Thanks! :)"
 
                         comment.mod.remove(spam=False, mod_note="Spoiler tag applied incorrectly")

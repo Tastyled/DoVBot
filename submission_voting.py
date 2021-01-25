@@ -281,7 +281,7 @@ class voting_session:
         except IndexError:
             pass
 
-        if self.bot_comment.score <= config["downvote_removal_thresh"] and not self.submission.approved:
+        if self.bot_comment.score <= config["downvote_removal_thresh"]:
             self.submission.mod.remove(spam=False, mod_note="Removal Threshold Met")
             self.submission.subreddit.message("Removal Threshold Met",
                 f"Bot comment score: {self.bot_comment.score}\n \

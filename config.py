@@ -60,8 +60,8 @@ config = dict(
     update_interval         = 30,
 
     # Automatic Removal Commment Score Threshold
-    downvote_removal_thresh = -100,
-    downvote_report_thresh  = -10,
+    downvote_removal_thresh = -10,
+    downvote_report_thresh  = -7,
 
     # Words used for voting
     dead_words              = ["dead", "ded", "rip", "dwad"],

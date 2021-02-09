@@ -19,7 +19,7 @@ config = dict(
                              f"\nPlease remember to mark news articles and other general spoilers with a [spoiler tag]({spoiler_wiki_url}).\n",
 
     # Welcome/Closed comment footer
-    comment_footer          = f"***\n[^(How to Vote)]({wiki_url}) ^(-) [^(Good at Art?)]({mod_message_url}) ^(-) [^(Send Feedback)]({feedback_url})",
+    comment_footer          = f"***\n[^(How to Vote)]({wiki_url}) ^(-) [^(Good at Art?)]({mod_message_url})",
 
     # Welcome text if account is too new or has too little karma
     low_karma_comment       = "Thank you for your submission to r/DeadorVegetable!\n\n" +
